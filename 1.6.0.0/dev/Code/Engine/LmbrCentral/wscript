@@ -1,0 +1,69 @@
+########################################################################################
+#
+# All or portions of this file Copyright (c) Amazon.com, Inc. or its affiliates, or
+# a third party where indicated.
+#
+# For complete copyright and license terms please see the LICENSE at the root of this
+# distribution (the "License"). All use of this software is governed by the License,
+# or, if provided, by the license below or the license accompanying this file. Do not
+# remove or modify any license notices. This file is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#
+########################################################################################
+
+def build(bld):
+
+    bld.CryEngineModule(
+        target          = 'LmbrCentral',
+        vs_filter       = 'EngineModules',
+        file_list       = 'LmbrCentral.waf_files',
+        platforms       = ['all'],
+        configurations  = ['all'],
+        pch             = 'source/Precompiled.cpp',
+        use             = ['AzFramework'],
+        includes        = ['include', 'source', bld.Path('Code/CryEngine/CryAction')],
+
+        #==============================
+        # Testing
+        #==============================
+        test_all_file_list = ['LmbrCentral_test.waf_files'],
+    )
+
+    # LmbrCentralEditor is for use by tools.
+    # It includes all code from LmbrCentral
+    # plus editor versions of many components.
+    bld.CryEngineModule(
+        target          = 'LmbrCentralEditor',
+        vs_filter       = 'EngineModules',
+        file_list       = ['LmbrCentral.waf_files', 'LmbrCentralEditor.waf_files'],
+        platforms       = ['win'],
+        configurations  = ['debug', 'debug_test', 'profile', 'profile_test'],
+        pch             = 'source/Precompiled.cpp',
+        features        = ['qt5'],
+        use             = ['AzToolsFramework'],
+        includes        = [
+                            'include', 'source',
+                            bld.Path('Code/Sandbox/Editor'),
+                            bld.Path('Code/Sandbox/Editor/Include'),
+                            bld.Path('Code/Sandbox/Plugins/EditorCommon'),
+                            bld.Path('Code/Sandbox/SDKs/Qt/include/QtANGLE'),
+                            bld.Path('Code/CryEngine/CryAction'),
+                            bld.Path('Code/SDKs/XT_13_4/Include'),
+                            ],
+        libpath         = [
+                            bld.Path('Code/SDKs/XT_13_4/lib'),
+                            ],
+        defines         = ['LMBR_CENTRAL_EDITOR',
+                           '_XTPLIB_VISUALSTUDIO_VERSION="vc120"', ],
+        autod_uselib    = ['QT5CORE',
+                           'QT5QUICK',
+                           'QT5QML',
+                           'QT5GUI',
+                           'QT5WIDGETS',
+                          ],
+
+        #==============================
+        # Testing
+        #==============================
+        test_all_file_list = ['LmbrCentralEditor_test.waf_files'],
+    )

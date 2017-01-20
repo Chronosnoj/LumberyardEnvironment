@@ -1,0 +1,59 @@
+########################################################################################
+# All or portions of this file Copyright (c) Amazon.com, Inc. or its affiliates or
+# its licensors.
+#
+# For complete copyright and license terms please see the LICENSE at the root of this
+# distribution (the "License"). All use of this software is governed by the License,
+# or, if provided, by the license below or the license accompanying this file. Do not
+# remove or modify any license notices. This file is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#
+#
+# Original file Copyright Crytek GMBH or its affiliates, used under license.
+#
+########################################################################################
+
+def build(bld):
+
+    bld.CryResourceCompilerModule(
+        #==============================
+        # Settings
+        #==============================
+        target                              = 'ResourceCompilerFBX',
+        vs_filter                           = 'RC',
+        file_list                           = 'resourcecompilerfbx.waf_files',
+        platforms                           = ['win'],
+        configurations                      = ['debug_all', 'profile_all'],
+
+        #==============================
+        # Common
+        #==============================
+        includes                            = [ '.',
+                                                bld.Path('Code/Tools'),
+                                                bld.Path('Code/Tools/RC/ResourceCompiler'),
+                                                bld.Path('Code/Tools/CryCommonTools'),
+                                                bld.Path('Code/SDKs/FbxSdk/include')],
+
+        autod_uselib                        = [ 'QT5CORE',  'QT5GUI',  'QT5WIDGETS'],
+
+        use                                 = ['AzToolsFramework'],
+
+        libpath                             = [ bld.Path('Code/Tools/CryCommonTools') ],
+
+        win_lib                             = [ 'libfbxsdk-md', 'dbghelp', 'Wininet' ],
+
+        win_x86_debug_all_libpath           = bld.Path('Code/SDKs/FbxSdk/lib/vs2013/x86/debug'),
+        win_x86_ndebug_libpath              = bld.Path('Code/SDKs/FbxSdk/lib/vs2013/x86/release'),
+        win_x86_ndebug_dedicated_libpath    = bld.Path('Code/SDKs/FbxSdk/lib/vs2013/x86/release'),
+        
+        win_x64_debug_all_libpath           = bld.Path('Code/SDKs/FbxSdk/lib/vs2013/x64/debug'),
+        win_x64_ndebug_libpath              = bld.Path('Code/SDKs/FbxSdk/lib/vs2013/x64/release'),
+        win_x64_ndebug_dedicated_libpath    = bld.Path('Code/SDKs/FbxSdk/lib/vs2013/x64/release'),
+        
+        export_definitions                  = 'ResourceCompilerPlugin.def',
+        
+        #==============================
+        # Testing
+        #==============================
+        test_all_file_list              = ['resourcecompilerfbx_test.waf_files'],
+    )

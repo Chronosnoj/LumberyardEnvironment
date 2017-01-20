@@ -1,0 +1,21 @@
+{
+    "Dependencies": [
+        {
+            "Uuid": "24a3427048184feba39ba2cf75d45c4c", 
+            "VersionConstraints": [
+                "~>0.1"
+            ], 
+            "_comment": "HMD Framework"
+        }
+    ],
+    
+    "GemFormatVersion": 3,
+    "Uuid": "3b1c41404cb147fe87e25bf72e035faa",
+    "Name": "OpenVR",
+    "DisplayName": "OpenVR",
+    "Version": "1.0.0",
+    "LinkType": "Dynamic",
+    "Summary": "Enables support for OpenVR devices such as the HTC Vive.",
+    "Tags": ["VR"],
+    "IconPath": "preview.png"
+}

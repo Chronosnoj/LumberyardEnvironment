@@ -1,0 +1,26 @@
+{
+   "ResourceCompilerFBX_uber_0.cpp":
+    {
+        "CryCommonTools":
+        [
+            "../../CryCommonTools/PathHelpers.cpp",
+            "../../CryCommonTools/StringHelpers.cpp",
+            "../../CryCommonTools/XMLWriter.cpp",
+            "../../CryCommonTools/PathHelpers.h",
+            "../../CryCommonTools/StringHelpers.h",
+            "../../CryCommonTools/XMLWriter.h"
+        ],
+        "Source Files":
+        [
+            "../ResourceCompiler/IConfig.cpp",
+            "FBXConverter.cpp",
+            "ResourceCompilerFBX.cpp",
+            "CryFbxScene.cpp",
+            "stdafx.h",
+            "FBXConverter.h",
+            "CryFbxScene.h",
+            "ResourceCompilerPlugin.def",
+            "Scene.h"
+        ]
+    }
+}

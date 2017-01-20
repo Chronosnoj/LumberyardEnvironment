@@ -1,0 +1,10 @@
+{
+    "none": {
+        "Implementation": [
+            "Source/OculusDevice.h",
+            "Source/OculusDevice.cpp",
+            "Source/OculusTouchController.h",
+            "Source/OculusTouchController.cpp"
+        ]
+    }
+}

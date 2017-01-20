@@ -1,0 +1,42 @@
+Project name:
+
+    Half (half-precision floating-point numbers)
+
+Project type: 
+
+    C++ library
+
+Description:
+
+    The Half library implements a 16-bit or "half-precision" binary
+    floating-point number type called "half."  The half data type is
+    essentially a smaller version of the 32-bit and 64-bit floating-
+    point data types defined in the IEEE 754 standard.
+
+    Objects of type half can represent real numbers whose absolute value
+    is less than 65504.  Numbers between 6e-5 and 65504 are represented
+    with less than 0.1% relative error.  Numbers smaller than 6e-5 are
+    represented with an absolute error of less than 6e-8.
+
+    Class half has been designed to behave the same way as the built-in
+    "float" and "double" C++ data types.  Half values can be used in
+    expressions just like float or double values.  Operators such as "+",
+    "*=" or "<" work with operands of type half, and half values are
+    implictly converted to floats or doubles as needed.
+
+Typical use:
+
+    16-bit floating-point numbers are mostly used for image processing
+    where floating-point data are desirable but where the full range and
+    precision of 32-bit floating-point numbers are not needed.
+
+Dependencies:
+
+    Half is a low-level library.  It should not depend on anything other
+    than the C++ standard library.
+
+Notes and Warnings:
+
+    * Conversion from float to half always rounds "to nearest even."
+      the other IEEE rounding modes are not implemented.
+

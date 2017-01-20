@@ -1,0 +1,3 @@
+LIBRARY	ResourceCompilerFBX
+EXPORTS
+	RegisterConvertors			@1

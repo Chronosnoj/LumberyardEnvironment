@@ -1,0 +1,11 @@
+{
+    "GemFormatVersion": 3,
+    "Uuid": "59b1b2acc1974aae9f18faddcaddac5b",
+    "Name": "InputManagementFramework",
+    "Version": "0.1.0",
+    "LinkType": "Dynamic",
+    "DisplayName": "Input Management Framework",
+    "Tags": ["Input", "Framework"],
+    "Summary": "This is the framework for managing input in Lumberyard",
+    "IconPath": "preview.png"
+}

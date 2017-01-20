@@ -1,0 +1,785 @@
+<html>
+<head>
+<style>
+<!--
+ /* Font Definitions */
+@font-face
+	{font-family:"Cambria Math";
+	src:"";
+	panose-1:2 4 5 3 5 4 6 3 2 4;
+	-font-charset:0;
+	-generic-font-family:roman;
+	-font-pitch:variable;
+	-font-signature:-536870145 1107305727 0 0 415 0;}
+@font-face
+	{font-family:"Calibri Light";
+	src:"";
+	panose-1:2 15 3 2 2 2 4 3 2 4;
+	-font-charset:0;
+	-generic-font-family:swiss;
+	-font-pitch:variable;
+	-font-signature:-1610611985 1073750139 0 0 415 0;}
+@font-face
+	{font-family:Calibri;
+	src:"";
+	panose-1:2 15 5 2 2 2 4 3 2 4;
+	-font-charset:0;
+	-generic-font-family:swiss;
+	-font-pitch:variable;
+	-font-signature:-536870145 1073786111 1 0 415 0;}
+ /* Style Definitions */
+ p.Normal, li.Normal, div.Normal
+	{-style-unhide:no;
+	-style-qformat:yes;
+	-style-parent:"";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:8.0pt;
+	margin-left:0in;
+	line-height:107%;
+	-pagination:widow-orphan;
+	font-size:11.0pt;
+	font-family:"Calibri",sans-serif;
+	-ascii-font-family:Calibri;
+	-ascii-theme-font:minor-latin;
+	-fareast-font-family:Calibri;
+	-fareast-theme-font:minor-latin;
+	-hansi-font-family:Calibri;
+	-hansi-theme-font:minor-latin;
+	-bidi-font-family:"Calibri";
+	-bidi-theme-font:minor-bidi;}
+h1
+	{-style-priority:9;
+	-style-unhide:no;
+	-style-qformat:yes;
+	-style-link:"Heading 1 Char";
+	-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:0in;
+	margin-bottom:.0001pt;
+	line-height:107%;
+	-pagination:widow-orphan lines-together;
+	page-break-after:avoid;
+	-outline-level:1;
+	font-size:16.0pt;
+	font-family:"Calibri Light",sans-serif;
+	-ascii-font-family:"Calibri Light";
+	-ascii-theme-font:major-latin;
+	-fareast-font-family:"Calibri";
+	-fareast-theme-font:major-fareast;
+	-hansi-font-family:"Calibri Light";
+	-hansi-theme-font:major-latin;
+	-bidi-font-family:"Calibri";
+	-bidi-theme-font:major-bidi;
+	color:#2E74B5;
+	-themecolor:accent1;
+	-themeshade:191;
+	-font-kerning:0pt;
+	font-weight:normal;}
+h2
+	{-style-priority:9;
+	-style-qformat:yes;
+	-style-link:"Heading 2 Char";
+	-style-next:Normal;
+	margin-top:2.0pt;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:0in;
+	margin-bottom:.0001pt;
+	line-height:107%;
+	-pagination:widow-orphan lines-together;
+	page-break-after:avoid;
+	-outline-level:2;
+	font-size:13.0pt;
+	font-family:"Calibri Light",sans-serif;
+	-ascii-font-family:"Calibri Light";
+	-ascii-theme-font:major-latin;
+	-fareast-font-family:"Calibri";
+	-fareast-theme-font:major-fareast;
+	-hansi-font-family:"Calibri Light";
+	-hansi-theme-font:major-latin;
+	-bidi-font-family:"Calibri";
+	-bidi-theme-font:major-bidi;
+	color:#2E74B5;
+	-themecolor:accent1;
+	-themeshade:191;
+	font-weight:normal;}
+h3
+	{-style-priority:9;
+	-style-unhide:no;
+	-style-qformat:yes;
+	-style-link:"Heading 3 Char";
+	-margin-top-alt:auto;
+	margin-right:0in;
+	-margin-bottom-alt:auto;
+	margin-left:0in;
+	-pagination:widow-orphan;
+	-outline-level:3;
+	font-size:13.5pt;
+	font-family:"Calibri",serif;
+	-fareast-font-family:"Calibri";
+	font-weight:bold;}
+a:link, span.Hyperlink
+	{-style-priority:99;
+	color:#0563C1;
+	-themecolor:hyperlink;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.HyperlinkFollowed
+	{-style-noshow:yes;
+	-style-priority:99;
+	color:#954F72;
+	-themecolor:followedhyperlink;
+	text-decoration:underline;
+	text-underline:single;}
+p
+	{-style-noshow:yes;
+	-style-priority:99;
+	-margin-top-alt:auto;
+	margin-right:0in;
+	-margin-bottom-alt:auto;
+	margin-left:0in;
+	-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Calibri",serif;
+	-fareast-font-family:"Calibri";}
+code
+	{-style-noshow:yes;
+	-style-priority:99;
+	font-family:"Courier New";
+	-ascii-font-family:"Courier New";
+	-fareast-font-family:"Calibri";
+	-hansi-font-family:"Courier New";
+	-bidi-font-family:"Courier New";}
+pre
+	{-style-noshow:yes;
+	-style-priority:99;
+	-style-link:"HTML Preformatted Char";
+	margin:0in;
+	margin-bottom:.0001pt;
+	-pagination:widow-orphan;
+	tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt;
+	font-size:10.0pt;
+	font-family:"Courier New";
+	-fareast-font-family:"Calibri";}
+p.Code, li.Code, div.Code
+	{-style-name:Code;
+	-style-unhide:no;
+	-style-qformat:yes;
+	-style-link:"Code Char";
+	margin:0in;
+	margin-bottom:.0001pt;
+	-add-space:auto;
+	-pagination:widow-orphan;
+	-hyphenate:none;
+	border:none;
+	-border-alt:solid windowtext .5pt;
+	padding:0in;
+	-padding-alt:1.0pt 4.0pt 1.0pt 4.0pt;
+	font-size:10.0pt;
+	-bidi-font-size:11.0pt;
+	font-family:"Consolas",sans-serif;
+	-ascii-font-family:Consolas;
+	-ascii-theme-font:minor-latin;
+	-fareast-font-family:Consolas;
+	-fareast-theme-font:minor-latin;
+	-hansi-font-family:Consolas;
+	-hansi-theme-font:minor-latin;
+	-bidi-font-family:"Consolas";
+	-bidi-theme-font:minor-bidi;}
+p.CodeCxSpFirst, li.CodeCxSpFirst, div.CodeCxSpFirst
+	{-style-name:CodeCxSpFirst;
+	-style-unhide:no;
+	-style-qformat:yes;
+	-style-link:"Code Char";
+	-style-type:export-only;
+	margin:0in;
+	margin-bottom:.0001pt;
+	-add-space:auto;
+	-pagination:widow-orphan;
+	-hyphenate:none;
+	border:none;
+	-border-alt:solid windowtext .5pt;
+	padding:0in;
+	-padding-alt:1.0pt 4.0pt 1.0pt 4.0pt;
+	font-size:10.0pt;
+	-bidi-font-size:11.0pt;
+	font-family:"Consolas",sans-serif;
+	-ascii-font-family:Consolas;
+	-ascii-theme-font:minor-latin;
+	-fareast-font-family:Consolas;
+	-fareast-theme-font:minor-latin;
+	-hansi-font-family:Consolas;
+	-hansi-theme-font:minor-latin;
+	-bidi-font-family:"Consolas";
+	-bidi-theme-font:minor-bidi;}
+p.CodeCxSpMiddle, li.CodeCxSpMiddle, div.CodeCxSpMiddle
+	{-style-name:CodeCxSpMiddle;
+	-style-unhide:no;
+	-style-qformat:yes;
+	-style-link:"Code Char";
+	-style-type:export-only;
+	margin:0in;
+	margin-bottom:.0001pt;
+	-add-space:auto;
+	-pagination:widow-orphan;
+	-hyphenate:none;
+	border:none;
+	-border-alt:solid windowtext .5pt;
+	padding:0in;
+	-padding-alt:1.0pt 4.0pt 1.0pt 4.0pt;
+	font-size:10.0pt;
+	-bidi-font-size:11.0pt;
+	font-family:"Consolas",sans-serif;
+	-ascii-font-family:Consolas;
+	-ascii-theme-font:minor-latin;
+	-fareast-font-family:Consolas;
+	-fareast-theme-font:minor-latin;
+	-hansi-font-family:Consolas;
+	-hansi-theme-font:minor-latin;
+	-bidi-font-family:"Consolas";
+	-bidi-theme-font:minor-bidi;}
+p.CodeCxSpLast, li.CodeCxSpLast, div.CodeCxSpLast
+	{-style-name:CodeCxSpLast;
+	-style-unhide:no;
+	-style-qformat:yes;
+	-style-link:"Code Char";
+	-style-type:export-only;
+	margin:0in;
+	margin-bottom:.0001pt;
+	-add-space:auto;
+	-pagination:widow-orphan;
+	-hyphenate:none;
+	border:none;
+	-border-alt:solid windowtext .5pt;
+	padding:0in;
+	-padding-alt:1.0pt 4.0pt 1.0pt 4.0pt;
+	font-size:10.0pt;
+	-bidi-font-size:11.0pt;
+	font-family:"Consolas",sans-serif;
+	-ascii-font-family:Consolas;
+	-ascii-theme-font:minor-latin;
+	-fareast-font-family:Consolas;
+	-fareast-theme-font:minor-latin;
+	-hansi-font-family:Consolas;
+	-hansi-theme-font:minor-latin;
+	-bidi-font-family:"Consolas";
+	-bidi-theme-font:minor-bidi;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+</head>
+
+<body lang=EN-US link="#0563C1" vlink="#954F72" style='tab-interval:.5in'>
+
+<div>
+
+<h1>Lumberyard AZ CodeGen Preview</h1>
+
+<p class=Normal></p>
+
+<p class=Normal>This is a preview for the code generation system we are
+developing for Lumberyard. Code generation is a common practice used when you
+have a lot of systems that share similar code with slight customizations to
+solve different problems. </p>
+
+<p class=Normal>The goal of this technology is to provide developers with a
+very general and versatile code generation system that can be customized to
+suit the many different requirements.</p>
+
+<br/>
+
+<h2>Overview</h2>
+
+<p class=Normal></p>
+
+<p class=Normal>AzCodeGenerator is a C++ based
+code generator that uses Clang annotations as the code markup syntax. This
+allows marked up source code to remain fully C++ compliant even without the
+presence of code generation.</p>
+
+<p class=Normal>AzCodeGenerator is a four stage
+code generation system.<br/><br/>
+The stages are:</p>
+
+<ul>
+<li><p class=Normal>Source code markup.</p></li>
+
+<li><p class=Normal>Clang parsing and intermediate format generation.</p></li>
+
+<li><p class=Normal>Custom script pre-processing.</p></li>
+
+<li><p class=Normal>Template engine assisted output generation.</p></li>
+</ul>
+
+<br/>
+
+<h2>Stage 1: Source Code Markup</h2>
+
+<p class=Normal></p>
+
+<p class=Normal>This stage refers to marking up existing code for code
+generation, this allows developers to create any custom tags and to pass in
+custom attributes to aid in code generation.</p>
+
+<div style='-element:para-border-div;border: windowtext 1.0pt;
+-border-alt:solid windowtext .5pt;padding:1.0pt 4.0pt 1.0pt 4.0pt'>
+
+<p class=CodeCxSpFirst>#if defined(AZ_CODE_GENERATOR)</p>
+
+<p class=CodeCxSpMiddle>#&#160;&#160; define AzSerialize(...)
+CreateArgumentAnnotation(AzSerialize,__VA_ARGS__)</p>
+
+<p class=CodeCxSpMiddle>#else</p>
+
+<p class=CodeCxSpMiddle>#&#160;&#160; define AzSerialize(...)
+</p>
+
+<p class=CodeCxSpLast>#endif // AZ_CODE_GENERATOR</p>
+
+</div>
+
+<p class=Normal></p>
+
+<p class=Normal>Tags within the AZ_CODE_GENERATOR preprocessor definition
+will be used by Clang&#160;s parser to generate annotations.</p>
+
+<br/>
+
+<h2>Stage 2: Clang parsing and intermediate format generation.</h2>
+
+<p class=Normal></p>
+
+<p class=Normal>The AzCodeGenerator utility will
+run on a specified set of files and will expand the CreateArgumentAnnotation
+macro into a fully qualified annotation with attributes as specified. </p>
+
+<p class=Normal>Example:</p>
+
+<p class=Normal>The markup tag: </p>
+
+<div style='-element:para-border-div;border: windowtext 1.0pt;
+-border-alt:solid windowtext .5pt;padding:1.0pt 4.0pt 1.0pt 4.0pt'>
+
+<p class=CodeCxSpFirst>
+AzEdit(uiId(&quot;Slider&quot;) attribute(Step(5)))</p>
+</div>
+<br/>
+
+<p class=Normal>Will expand to a clang compatible attribute:</p>
+
+<div style='-element:para-border-div;border: windowtext 1.0pt;
+-border-alt:solid windowtext .5pt;padding:1.0pt 4.0pt 1.0pt 4.0pt'>
+
+<p class=CodeCxSpFirst>
+__attribute__((annotation(uiId(&quot;Slider&quot;) attribute(Step(5)))))</p>
+</div>
+<br/>
+<p class=Normal>This annotation will be parsed by AzCodeGenerator
+and will produce data in the intermediate format which by default is JSON.</p>
+
+<div style='-element:para-border-div;border: windowtext 1.0pt;
+-border-alt:solid windowtext .5pt;padding:1.0pt 4.0pt 1.0pt 4.0pt'>
+
+<p class=CodeCxSpFirst>u 'annotations' : {</p>
+
+<p class=CodeCxSpMiddle> 
+&#160;&#160;&#160;&#160;u 'AzEdit' : {</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;u 'attribute' : {</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;u 'Step' : 5</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160;&#160;},</p>
+
+<p class=CodeCxSpMiddle> 
+&#160;&#160;&#160;&#160;u 'uiId' : u '&quot;Slider&quot;'</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160;&#160;}</p>
+
+<p class=CodeCxSpLast>}</p>
+
+</div>
+
+
+<br/>
+<h2>Stage 3: Custom Script Preprocessing</h2>
+
+<p class=Normal></p>
+
+<p class=Normal>Oftentimes there will be complex situations in which the
+intermediate format requires some custom logic in order to produce the desired
+results, in order to aid developers satisfy any custom requirements we transmit
+the intermediate format into a Python script. </p>
+
+<p class=Normal>Developers may then decode the intermediate format directly
+within Python and operate directly on the data as necessary before passing into
+the final stage.</p>
+
+<p class=Normal>The scripts can be found in the Scripts/scripts folder, they consist of three parts, 
+a Settings class, the Script class and a factory function to create the script's instance.</p>
+
+<div style='-element:para-border-div;border: windowtext 1.0pt;
+-border-alt:solid windowtext .5pt;padding:1.0pt 4.0pt 1.0pt 4.0pt'>
+<p class=CodeCxSpFirst>
+from az_code_gen.base import *<br/>
+<br/>
+# ----------------------------------------------<br/>
+class AZClassCPP_Settings(Settings):<br/>
+&#160;&#160;&#160;&#160;def __init__(self):<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;self.extension = "cpp"<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;self.templateFile = "AzClassCpp.tpl"<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;self.expectedTags = ["AzClass","AzComponent"]<br/>
+<br/>
+# ----------------------------------------------<br/>
+class AZClassCPP_Script(Script):<br/>
+<br/>
+&#160;&#160;&#160;&#160;# ----------------------------------------------<br/>
+&#160;&#160;&#160;&#160;def __init__(self, env, settings):<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Script.__init__(self, settings)<br/>
+<br/>
+# ----------------------------------------------<br/>
+# Factory function - called from launcher<br/>
+def createScript(env):    <br/>
+&#160;&#160;&#160;&#160;return AZClassCPP_Script(env, AZClassCPP_Settings())<br/>
+</p>
+
+</div>
+
+<p class=Normal></p>
+
+<p class=Normal>
+The settings class derives from az_code_gen.Settings and it contains the properties that will drive 
+the default behavior of the code generation scripts. Specify the output extension of the generated
+code file, specify which template will be used by the Jinja2 template engine and a set of 
+expected tags we anticipate to find in the JSON data we will use to generate code, if these tags
+are not found, we do not run the file through the template engine.
+</p>
+
+<p class=Normal>
+<b>extension</b><br/>
+Set this to the file extension the script needs to save the generated file in<br/>
+default: "cpp"<br/>
+<br/>
+<b>templateFile</b><br/>
+The template file to run<br/>
+default: "default.tpl"<br/>
+<br/>
+<b>expectedTags</b><br/>
+The presence of these tags will cause this script to run<br/>
+<br/>
+<b>shouldAddToBuild</b><br/>
+WAF only: Should we add the output file to the cpp build<br/>
+</p>
+
+<p class=Normal>
+You may override completely the default code generation behavior by implementing your own version
+of the <i>Script</i> class' Run function. See az_code_gen/base.py.
+</p>
+
+<br/>
+
+<h2>Stage 4: Template engine assisted output generation.</h2>
+
+<p class=Normal></p>
+
+<p class=Normal>Finally, the code generation data is passed into the Jinja2
+template engine (<a href="http://jinja.pocoo.org/">http://jinja.pocoo.org/</a>).
+Here you can access all the JSON data through the json_object
+field.</p>
+
+<p class=Normal>To see the raw JSON data your Jinja2 template would look
+like:</p>
+
+<div style='-element:para-border-div;border: windowtext 1.0pt;
+-border-alt:solid windowtext .5pt;padding:1.0pt 4.0pt 1.0pt 4.0pt'>
+
+<p class=CodeCxSpFirst>/*</p>
+
+<p class=CodeCxSpMiddle>// Reference JSON object</p>
+
+<p class=CodeCxSpMiddle>{{json_object}}</p>
+
+<p class=CodeCxSpLast>*/</p>
+
+</div>
+
+<p class=Normal></p>
+
+<p class=Normal><h3>Examples:</h3></p>
+
+<p class=Normal>Iterating over classes and structs:</p>
+
+<div style='-element:para-border-div;border: windowtext 1.0pt;
+-border-alt:solid windowtext .5pt;padding:1.0pt 4.0pt 1.0pt 4.0pt'>
+
+<p class=CodeCxSpFirst>{% for class in json_object.objects
+if class.type == 'class' or class.type
+== 'struct' %}</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; {# Enumerate
+all class and struct objects #}</p>
+
+<p class=CodeCxSpMiddle>{% endfor %}</p>
+
+<p class=CodeCxSpMiddle></p>
+
+<p class=CodeCxSpMiddle>{% for class in json_object.objects
+if class.type == 'class' or class.type
+== 'struct' %}</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160; {% for field
+in class.fields %}</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160;&#160;&#160;&#160;&#160; {% if 
+field.annotations.MyFieldAttribute is defined %}</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; {# Use
+per-field attribute #}</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160;&#160;&#160;&#160;&#160; {% 
+endfor %}</p>
+
+<p class=CodeCxSpMiddle>{% endfor %}</p>
+
+<p class=CodeCxSpMiddle></p>
+
+<p class=CodeCxSpMiddle>{% for class in json_object.objects
+if class.type == 'class' or class.type
+== 'struct' %}</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160; {% if 
+class.annotations.MyTag is defined %} </p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; {# Use
+per-class attribute #}</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160;&#160;&#160;&#160;&#160; {
+{ class.annotations.
+MyTag }}</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160; {%
+endif %}</p>
+
+<p class=CodeCxSpLast>{% endfor %}</p>
+
+</div>
+
+<p class=Normal>Intermediate format details</p>
+
+<p class=Normal>There is some information extracted from Clang during the
+parsing of the source code&#160;s AST. </p>
+
+<p class=Normal><h3>Meta information</h3></p>
+
+<div style='-element:para-border-div;border: windowtext 1.0pt;
+-border-alt:solid windowtext .5pt;padding:1.0pt 4.0pt 1.0pt 4.0pt'>
+
+<p class=CodeCxSpFirst>meta' : {</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160; 
+u 'path' : u 'X:/Path/to/source/codegen_source.h'</p>
+
+<p class=CodeCxSpLast>}</p>
+
+</div>
+
+<p class=Normal></p>
+
+<p class=Normal><h3>Objects</h3></p>
+
+<div style='-element:para-border-div;border: windowtext 1.0pt;
+-border-alt:solid windowtext .5pt;padding:1.0pt 4.0pt 1.0pt 4.0pt'>
+
+<p class=Code>u 'objects' : []</p>
+
+</div>
+
+<p class=Normal></p>
+
+<p class=Normal>Objects consist of classes, structs
+or enums.</p>
+
+<p class=Normal>For classes and structs we extract
+the following information:</p>
+
+<p class=Normal>Name</p>
+
+<div style='-element:para-border-div;border: windowtext 1.0pt;
+-border-alt:solid windowtext .5pt;padding:1.0pt 4.0pt 1.0pt 4.0pt'>
+
+<p class=CodeCxSpFirst>u 'name' : u 'NestedCodeGenStruct',</p>
+
+<p class=CodeCxSpLast>u 'qualified_name': u 'MyCodegenStruct::NestedCodeGenStruct',</p>
+
+</div>
+
+<p class=Normal></p>
+
+<p class=Normal><h3>Type</h3></p>
+
+<p class=Normal>class, struct</p>
+
+<div style='-element:para-border-div;border: windowtext 1.0pt;
+-border-alt:solid windowtext .5pt;padding:1.0pt 4.0pt 1.0pt 4.0pt'>
+
+<p class=Code>u 'type' : u 'class',</p>
+
+</div>
+
+<p class=Normal></p>
+
+<p class=Normal><h3>Traits</h3></p>
+
+<div style='-element:para-border-div;border: windowtext 1.0pt;
+-border-alt:solid windowtext .5pt;padding:1.0pt 4.0pt 1.0pt 4.0pt'>
+
+<p class=CodeCxSpFirst>u 'traits' : {</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160; u 'isAbstract' : False,</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160; u 'isPOD' : False,</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160; u 'isPolymorphic' : False</p>
+
+<p class=CodeCxSpLast>}</p>
+
+</div>
+
+<p class=Normal></p>
+
+<p class=Normal><h3>Array of Base classes</h3></p>
+
+<div style='-element:para-border-div;border: windowtext 1.0pt;
+-border-alt:solid windowtext .5pt;padding:1.0pt 4.0pt 1.0pt 4.0pt'>
+
+<p class=CodeCxSpFirst>u 'bases' : [{</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160; u 'name' : u 'EBusTraits',</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160; u 'qualified_name' : u 'AZ::
+EBusTraits'</p>
+
+<p class=CodeCxSpMiddle>}</p>
+
+<p class=CodeCxSpLast>]</p>
+
+</div>
+
+<p class=Normal></p>
+
+<p class=Normal><h3>Array of fields</h3></p>
+
+<div style='-element:para-border-div;border: windowtext 1.0pt;
+-border-alt:solid windowtext .5pt;padding:1.0pt 4.0pt 1.0pt 4.0pt'>
+
+<p class=Code>u 'fields' : [],</p>
+
+</div>
+
+<p class=Normal></p>
+
+<p class=Normal><h3>Fields</h3></p>
+
+<div style='-element:para-border-div;border: windowtext 1.0pt;
+-border-alt:solid windowtext .5pt;padding:1.0pt 4.0pt 1.0pt 4.0pt'>
+
+<p class=CodeCxSpFirst>u 'fields' : [{</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160; u 'type' : u 'int',</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160; u 'name' : u 'm_data1',</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160; u 'qualified_name' : u 'MyNativeStruct::m_data1',</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160; u 'annotations' : {}</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160; }</p>
+
+<p class=CodeCxSpLast>]</p>
+
+</div>
+
+<p class=Normal><h3>Array of Methods</h3></p>
+
+<p class=Normal>Methods are all of an object's given member functions, they provide information about their return value, each of the 
+function arguments, their name and qualified name and they can also be annotated.</p>
+
+<div style='-element:para-border-div;border: windowtext 1.0pt;
+-border-alt:solid windowtext .5pt;padding:1.0pt 4.0pt 1.0pt 4.0pt'>
+
+<p class=CodeCxSpFirst>
+u 'methods' : [],
+</p>
+
+</div>
+
+<p class=Normal><h3>Methods</h3></p>
+
+<div style='-element:para-border-div;border: windowtext 1.0pt;
+-border-alt:solid windowtext .5pt;padding:1.0pt 4.0pt 1.0pt 4.0pt'>
+
+<p class=CodeCxSpFirst>u 'return_type'
+: u 'void',</p>
+
+<p class=CodeCxSpMiddle>u 'is_virtual'
+: False,</p>
+
+<p class=CodeCxSpMiddle>u 'name' : u 'MyCodegenStruct',</p>
+
+<p class=CodeCxSpMiddle>u 'qualified_name'
+: u 'MyCodegenStruct::MyCodegenStruct',</p>
+
+<p class=CodeCxSpLast>u 'annotations' : {}</p>
+
+</div>
+
+<p class=Normal></p>
+
+<p class=Normal><h3>Enums</h3></p>
+
+<p class=Normal>(Note: Enums are not fully
+implemented, while we can grab their information, we currently do not support enum attributes)</p>
+
+<div style='-element:para-border-div;border: windowtext 1.0pt;
+-border-alt:solid windowtext .5pt;padding:1.0pt 4.0pt 1.0pt 4.0pt'>
+
+<p class=CodeCxSpFirst>{</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160; u 'elements' : [u 'First', u 'Second', u 'Third'],</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160; u 'type' : u 'enum',</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160; u 'name' : u 'GlobalCodeGenEnum'</p>
+
+<p class=CodeCxSpLast>}</p>
+
+</div>
+
+<p class=Normal></p>
+
+<div style='-element:para-border-div;border: windowtext 1.0pt;
+-border-alt:solid windowtext .5pt;padding:1.0pt 4.0pt 1.0pt 4.0pt'>
+
+<p class=CodeCxSpFirst>{% for obj in json_object.objects if obj.type
+== 'enum' %}</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160; {# Enumerate
+all enums #}</p>
+
+<p class=CodeCxSpMiddle>&#160;&#160;&#160; {{ obj.name }}</p>
+
+<p class=CodeCxSpLast>{% endfor %}</p>
+
+</div>
+
+<p class=Normal></p>
+
+</div>
+
+</body>
+
+</html>

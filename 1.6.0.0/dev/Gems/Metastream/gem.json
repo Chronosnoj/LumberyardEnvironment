@@ -1,0 +1,11 @@
+{
+    "GemFormatVersion": 3,
+    "Uuid": "c02d7efe05134983b5699d9ee7594c3a",
+    "Name": "Metastream",
+    "DisplayName": "Metastream",
+    "Version": "1.0.0",
+    "LinkType": "Dynamic",
+    "Summary": "Runs a HTTP server that can service requests for the purpose of creating scenes for stream broadcasting",
+    "Tags": ["Metastream", "HTTP Server"],
+    "IconPath": "preview.png"
+}

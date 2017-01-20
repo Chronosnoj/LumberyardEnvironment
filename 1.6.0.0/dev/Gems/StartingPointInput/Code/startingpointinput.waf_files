@@ -1,0 +1,30 @@
+{
+    "none": {
+        "Source": [
+            "Source/StdAfx.cpp",
+            "Source/StdAfx.h"
+        ]
+    },
+    "auto": {
+        "Include": [
+            "Include/StartingPointInput/BaseDataTypes.h"
+        ],
+        "Source": [
+            "Source/Held.h",
+            "Source/Held.cpp",
+            "Source/Pressed.h",
+            "Source/Pressed.cpp",
+            "Source/Released.h",
+            "Source/Released.cpp",
+            "Source/Analog.h",
+            "Source/Analog.cpp",
+            "Source/OrderedEventCombination.h",
+            "Source/OrderedEventCombination.cpp",
+            "Source/UnorderedEventCombination.h",
+            "Source/UnorderedEventCombination.cpp",
+            "Source/VectorizedEventCombination.h",
+            "Source/VectorizedEventCombination.cpp",
+            "Source/StartingPointInputGem.cpp"
+        ]
+    }
+}

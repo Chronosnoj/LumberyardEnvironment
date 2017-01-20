@@ -1,0 +1,21 @@
+{
+    "Dependencies": [
+        {
+            "Uuid": "24a3427048184feba39ba2cf75d45c4c", 
+            "VersionConstraints": [
+                "~>0.1"
+            ], 
+            "_comment": "HMD Framework"
+        }
+    ], 
+    
+    "GemFormatVersion": 3,
+    "Uuid": "c32178b3c4e94fbead069bd92ff9b04a",
+    "Name": "Oculus",
+    "DisplayName": "Oculus",
+    "Version": "1.0.0",
+    "LinkType": "Dynamic",
+    "Summary": "Enables support for the Oculus Rift",
+    "Tags": ["VR"],
+    "IconPath": "preview.png"
+}

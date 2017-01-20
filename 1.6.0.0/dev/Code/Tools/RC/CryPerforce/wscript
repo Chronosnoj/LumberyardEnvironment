@@ -1,0 +1,56 @@
+########################################################################################
+# All or portions of this file Copyright (c) Amazon.com, Inc. or its affiliates or
+# its licensors.
+#
+# For complete copyright and license terms please see the LICENSE at the root of this
+# distribution (the "License"). All use of this software is governed by the License,
+# or, if provided, by the license below or the license accompanying this file. Do not
+# remove or modify any license notices. This file is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#
+#
+# Original file Copyright Crytek GMBH or its affiliates, used under license.
+#
+########################################################################################
+
+def build(bld):
+
+    bld.CryResourceCompilerModule(
+
+        #==============================
+        # Settings
+        #==============================
+        target                      = 'CryPerforce',
+        vs_filter                   = 'RC',
+        file_list                   = 'cryperforce.waf_files',
+        platforms                   = ['win'],
+        configurations              = ['debug', 'debug_test', 'profile', 'profile_test'],
+        export_definitions 	        = 'CryPerforce.def',
+        
+        build_in_dedicated  = False, # not used by dedicated server
+        use                         = ['AzCore'],
+        
+        #==============================
+        # Common
+        #==============================
+        defines                     = ['CRYPERFORCE_EXPORTS'],
+        includes                    = [ '.',
+                                        bld.Path('Code/Tools/RC/ResourceCompiler'),
+                                        bld.Path('Code/Tools/CryCommonTools') ],
+        lib                         = [ 'libclient',
+                                        'librpc',
+                                        'libsupp',
+                                        'Ws2_32',
+                                        'Mswsock',
+                                        'libp4sslstub' ],
+        #==============================
+        # Windows / x64
+        #==============================
+        win_x64_debug_all_libpath   = bld.Path('Code/SDKs/p4api/Debug'),
+        win_x64_ndebug_libpath      = bld.Path('Code/SDKs/p4api/Release'),
+        
+        #==============================
+        # Testing
+        #==============================
+        test_all_file_list = ['cryperforce_test.waf_files'],
+    )

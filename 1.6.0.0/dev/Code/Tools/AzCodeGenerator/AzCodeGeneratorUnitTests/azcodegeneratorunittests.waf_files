@@ -1,0 +1,11 @@
+{
+	"none":
+	{
+		"Root":
+		[
+			"main.cpp",
+			"../../../Framework/AzCore/Tests/CodeGen.h",
+			"../../../Framework/AzCore/Tests/CodeGen.cpp"
+		]
+	}
+}

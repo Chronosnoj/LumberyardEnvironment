@@ -1,0 +1,13 @@
+{
+    "none":
+    {
+        "Source Files/Mac":
+        [
+            "win/main.cpp",
+            "win/main.h",
+            "win/main_osx.cpp",
+            "win/utils.h",
+            "win/utils.cpp"
+        ]
+    }
+}

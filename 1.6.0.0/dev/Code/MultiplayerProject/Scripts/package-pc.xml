@@ -1,0 +1,10 @@
+<project name="package-pc" basedir="../../../">
+
+    <patternset id="include-binary-patternset-pc">
+        <include name="Bin64.Dedicated/*.exe"/>
+        <include name="Bin64.Dedicated/*.dll"/>
+	<include name="vcredist_x64.exe"/>
+	<include name="Install.bat"/>
+    </patternset>
+
+</project>

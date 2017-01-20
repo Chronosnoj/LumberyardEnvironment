@@ -1,0 +1,11 @@
+{
+    "GemFormatVersion": 3,
+    "Uuid": "73d8779dc28a4123b7c9ed76217464af",
+    "Name": "StartingPointMovement",
+    "Version": "0.1.0",
+    "LinkType": "Dynamic",
+    "DisplayName": "Starting Point Movement [PREVIEW]",
+    "Summary": "(This Gem is in preview, subject to change) Move and rotate component entities with this Gem. This Gem will show you one way to turn events into actions. Use the Starting Point Input Gem to generate these events from raw input, or create your own code to send events.",
+    "Tags": ["Movement", "Starting Point"],
+    "IconPath": "preview.png"
+}

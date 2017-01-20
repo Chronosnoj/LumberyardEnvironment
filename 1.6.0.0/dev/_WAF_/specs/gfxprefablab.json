@@ -1,0 +1,38 @@
+{
+    "description"           : "Configuration to build non-essential GFXPrefabLab suite",
+    "visual_studio_name"    : "GFXPrefabLab",
+    "comment"               : "Compile graphics prefab lab on windows.",
+    "disable_game_projects" : true,
+
+    "win_modules" :
+    [
+        "AzCore",
+        "AzFramework",
+        "AzTestRunner",
+        "GFXPrefabLab"
+    ],
+
+    "win_debug_modules": [
+        "LyIdentity_shared",
+        "LyIdentity_static",
+        "LyMetricsShared_shared",
+        "LyMetricsShared_static",
+        "LyMetricsProducer_shared",
+        "LyMetricsProducer_static"
+    ],
+
+    "win_profile_modules": [
+        "LyIdentity_shared",
+        "LyIdentity_static",
+        "LyMetricsShared_shared",
+        "LyMetricsShared_static",
+        "LyMetricsProducer_shared",
+        "LyMetricsProducer_static",
+        "LyMetricsProducer_python",
+        "LyMetricsConsumer",
+        "LyInstallerMetrics"
+    ],
+
+    "darwin_modules" :
+    []
+}

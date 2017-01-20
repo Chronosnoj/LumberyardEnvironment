@@ -1,0 +1,7 @@
+{
+    "auto": {
+        "Tests": [
+            "Tests/TestGem_SourbeerTest.cpp"
+        ]
+    }
+}

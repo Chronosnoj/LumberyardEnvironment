@@ -1,0 +1,26 @@
+{
+    "auto": {
+        "Source": [
+            "Source/IEventActionHandler.h",
+            "Source/EventActionBindingComponent.h",
+            "Source/EventActionBindingComponent.cpp",
+            "Source/MoveEntityAction.h",
+            "Source/MoveEntityAction.cpp",
+            "Source/RotateEntityAction.h",
+            "Source/RotateEntityAction.cpp",
+            "Source/AddPhysicsImpulseAction.h",
+            "Source/AddPhysicsImpulseAction.cpp",
+            "Source/StartingPointMovementGem.cpp"
+        ],
+        "Include": [
+            "Include/StartingPointMovement/StartingPointMovementConstants.h",
+            "Include/StartingPointMovement/StartingPointMovementUtilities.h"
+        ]
+    },
+    "none": {
+        "Source": [
+            "Source/StdAfx.cpp",
+            "Source/StdAfx.h"
+        ]
+    }
+}

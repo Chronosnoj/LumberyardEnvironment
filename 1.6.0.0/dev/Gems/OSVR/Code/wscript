@@ -1,0 +1,31 @@
+
+
+def build(bld):
+    bld.env.LIB_OSVR_STATIC     = ['osvrClient', 
+                                    'osvrClientKit', 
+                                    'osvrCommon', 
+                                    'osvrConnection', 
+                                    'osvrJointClientKit',
+                                    'osvrUtil', 
+                                    'osvrRenderManager']
+    bld.env.LIBPATH_OSVR_STATIC  = [bld.Path('Code/SDKs/OSVR/lib')]
+    bld.env.INCLUDES_OSVR_STATIC = [bld.Path('Code/SDKs/OSVR/include')]
+
+    bld.DefineGem(
+        includes    = [bld.Path('Code/CryEngine/CryCommon'),
+                       bld.Path('Code/CryEngine/CryAction')],
+
+        #Define OSVR for Windows Only right now
+        win_use         = ['OSVR_STATIC'],
+        win_file_list   = ['osvr_win.waf_files'],
+        win_features    = ['copy_dependent_libs'],
+        source_artifacts_include = ['Code/SDKs/OSVR/bin/osvrClient.dll',
+                                    'Code/SDKs/OSVR/bin/osvrCommon.dll',
+                                    'Code/SDKs/OSVR/bin/osvrClientKit.dll', 
+                                    'Code/SDKs/OSVR/bin/osvrConnection.dll',
+                                    'Code/SDKs/OSVR/bin/osvrJointClientKit.dll',
+                                    'Code/SDKs/OSVR/bin/osvrUtil.dll',
+                                    'Code/SDKs/OSVR/bin/osvrRenderManager.dll',
+                                    'Code/SDKs/OSVR/bin/glew32.dll',
+                                    'Code/SDKs/OSVR/bin/SDL2.dll'],
+    )

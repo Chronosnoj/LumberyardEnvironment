@@ -1,0 +1,9 @@
+{
+    "auto": {
+        "common": [
+            "common/main.cpp",
+            "common/LabApplication.h",
+            "common/LabApplication.cpp"
+        ]
+    }
+}

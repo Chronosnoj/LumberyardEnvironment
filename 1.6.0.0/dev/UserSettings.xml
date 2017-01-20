@@ -1,0 +1,16 @@
+<ObjectStream version="1">
+	<Class name="UserSettingsContainer" version="3" type="{42C087CF-4F19-4DAF-B2B1-2927D94AA295}">
+		<Class name="AZStd::unordered_map" field="Map" type="{18456A80-63CC-40C5-BF16-6AF94F9A9ECC}">
+			<Class name="AZStd::pair" field="element" type="{9F3F5302-3390-407A-A6F7-2E011E3BB686}">
+				<Class name="unsigned int" field="value1" value="1280829544" type="{43DA906B-7DEF-4CA8-9790-854106D3F983}"/>
+				<Class name="AZStd::intrusive_ptr" field="value2" type="{C4B5400B-5CDC-4B14-932E-BFA30BC1DE35}">
+					<Class name="AZ::StreamerComponentUserSettings" field="element" type="{DBE98B4C-766C-453E-84AD-AF5425696591}">
+						<Class name="bool" field="enableDrilling" value="true" type="{A0CA880C-AFE4-43CB-926C-59AC48496112}"/>
+						<Class name="bool" field="drillingTrackStreams" value="false" type="{A0CA880C-AFE4-43CB-926C-59AC48496112}"/>
+					</Class>
+				</Class>
+			</Class>
+		</Class>
+	</Class>
+</ObjectStream>
+

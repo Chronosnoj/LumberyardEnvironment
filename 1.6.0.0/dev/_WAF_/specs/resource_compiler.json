@@ -1,0 +1,24 @@
+{
+    "description"           : "Configuration to build only the Resource Compiler",
+    "visual_studio_name"    : "ResourceCompiler",
+    "disable_game_projects"  : true,
+    "platforms"             : ["win"],
+    "configurations"        : ["debug","profile"],
+
+    "modules" :
+    [
+        "CryCommon",
+        "CryPerforce",
+        "CryPhysicsRC",
+        "ResourceCompiler",
+        "ResourceCompilerABC",
+        "ResourceCompilerFBX",
+        "ResourceCompilerImage",
+        "ResourceCompilerPC",
+        "ResourceCompilerXML",
+        "ResourceCompilerScene",
+        "ResourceCompilerSlice",
+        "CryXML",
+        "CrySystem"
+    ]
+}

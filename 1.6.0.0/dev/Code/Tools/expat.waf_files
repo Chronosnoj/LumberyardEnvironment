@@ -1,0 +1,24 @@
+{
+    "none":
+    {
+        "Root" : 
+        [
+            "../SDKs/expat/lib/ascii.h",
+            "../SDKs/expat/lib/asciitab.h",
+            "../SDKs/expat/lib/expat.h",
+            "../SDKs/expat/lib/expat_external.h",
+            "../SDKs/expat/lib/iasciitab.h",
+            "../SDKs/expat/lib/latin1tab.h",
+            "../SDKs/expat/lib/nametab.h",
+            "../SDKs/expat/lib/utf8tab.h",
+            "../SDKs/expat/lib/winconfig.h",
+            "../SDKs/expat/lib/xmlparse.c",
+            "../SDKs/expat/lib/xmlrole.c",
+            "../SDKs/expat/lib/xmlrole.h",
+            "../SDKs/expat/lib/xmltok.c",
+            "../SDKs/expat/lib/xmltok.h",
+            "../SDKs/expat/lib/xmltok_impl.h",
+            "../SDKs/expat/lib/xmltok_ns.c"
+        ]
+    }
+}

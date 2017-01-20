@@ -1,0 +1,996 @@
+########################################################################################
+# All or portions of this file Copyright (c) Amazon.com, Inc. or its affiliates or
+# its licensors.
+#
+# For complete copyright and license terms please see the LICENSE at the root of this
+# distribution (the "License"). All use of this software is governed by the License,
+# or, if provided, by the license below or the license accompanying this file. Do not
+# remove or modify any license notices. This file is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#
+#
+# Original file Copyright Crytek GMBH or its affiliates, used under license.
+#
+########################################################################################
+
+import sys
+
+# you can uncomment this to make debugging build command lines easier.
+# sys.stdout.write('[WAF] Command line: ' + str(sys.argv))
+
+import subprocess
+import os
+import string
+import xml.etree.ElementTree as ET
+from waflib import Configure, Logs, Utils, Options, ConfigSet
+from waflib.Build import BuildContext, CleanContext, Context
+# DO NOT REMOVE! 'c_aliases' and 'c' are required.
+from waflib.Tools import c_aliases, c
+
+from waflib.Task import Task, RUN_ME, SKIP_ME
+from waflib.Configure import conf, ConfigurationContext
+#from waflib.TaskGen import after_method, before_method, feature, extension
+from waflib.Errors import BuildError, WafError
+#from waflib.TaskGen import taskgen_method
+
+from subprocess import call
+
+# Attempt to import the winregistry module.
+try:
+    import _winreg
+    WINREG_SUPPORTED=True
+except ImportError:
+    WINREG_SUPPORTED=False
+    pass
+    
+# Attempt to import the aztest module
+try:
+    import aztest
+    AZ_TEST_SUPPORTED=True
+except ImportError:
+    AZ_TEST_SUPPORTED=False
+    pass
+
+# Load globals from branch spec file if we must
+from waf_branch_spec import PLATFORMS,CONFIGURATIONS,PLATFORM_CONFIGURATION_FILTER,VERSION_NUMBER_PATTERN, MONOLITHIC_BUILDS
+
+###############################################################################
+Configure.autoconfig = True
+
+###############################################################################
+CRY_WAF_TOOL_DIR='Code/Tools/waf-1.7.13/lmbrwaflib'
+
+###############################################################################
+PLATFORM_COMPILE_SETTINGS = [
+    'compile_settings_cryengine',
+    'compile_settings_msvc',
+    'compile_settings_gcc',
+    'compile_settings_clang',
+    'compile_settings_windows',
+    'compile_settings_linux',
+    'compile_settings_linux_x64',
+    'compile_settings_darwin',
+    'compile_settings_durango',
+    'compile_settings_orbis',
+    'compile_settings_dedicated',
+    'compile_settings_test',
+    'compile_settings_android_gcc',
+    'compile_settings_android_clang',
+    'compile_settings_ios',
+    'compile_settings_appletv',
+]
+
+
+###############################################################################
+CURRENT_WAF_EXECUTABLE = '{0} ./Code/Tools/waf-1.7.13/lmbr_waf'.format(os.path.relpath(sys.executable))
+USE_LOCAL_PYTHON = not sys.executable.startswith(os.getcwd())
+
+###############################################################################
+# List of subfolders to parse
+SUBFOLDERS = [
+    'Code',
+    'Engine',
+    ]
+
+###############################################################################
+# Configure Options for WAF
+def options(opt):
+    opt.load('cry_utils' ,tooldir=CRY_WAF_TOOL_DIR)
+    opt.load('project_settings', tooldir=CRY_WAF_TOOL_DIR)
+    opt.load('branch_spec', tooldir=CRY_WAF_TOOL_DIR)
+
+    #LUMBERYARD
+    opt.load('lumberyard_sdks', tooldir=CRY_WAF_TOOL_DIR)
+    opt.load('gems', tooldir=CRY_WAF_TOOL_DIR)
+    opt.load('az_code_generator', tooldir=CRY_WAF_TOOL_DIR)
+
+    ###########################################
+    # Load support for Uber Files
+    opt.load('generate_uber_files', tooldir=CRY_WAF_TOOL_DIR)
+
+    ###########################################
+    # Load support for use map files
+    opt.load('generate_module_def_files', tooldir=CRY_WAF_TOOL_DIR)
+
+    ###########################################
+    # Load Project Generators based on host (use the custom cry versions)
+    host = Utils.unversioned_sys_platform()
+
+    opt.load('msvs', tooldir=CRY_WAF_TOOL_DIR)
+    opt.load('msvs_override_handling', tooldir=CRY_WAF_TOOL_DIR)
+    opt.load('mscv_helper' ,tooldir=CRY_WAF_TOOL_DIR)
+
+    if host == 'darwin':
+        opt.load('xcode', tooldir=CRY_WAF_TOOL_DIR)
+    if host == 'linux':
+        opt.load('eclipse', tooldir=CRY_WAF_TOOL_DIR)
+
+    opt.load('android_studio' ,tooldir=CRY_WAF_TOOL_DIR)
+
+    ###########################################
+    # Load the android tools
+    opt.load('android', tooldir=CRY_WAF_TOOL_DIR)
+
+    if host == 'win32':
+        # Load tools to improve dependency checking (by using compiler features)
+        opt.load('mscv_helper', tooldir=CRY_WAF_TOOL_DIR)
+        # load gui for show_options_dialog
+        opt.load('gui_tasks' , tooldir=CRY_WAF_TOOL_DIR)
+
+    opt.load('msvcdeps', tooldir=CRY_WAF_TOOL_DIR)
+    opt.load('gccdeps', tooldir=CRY_WAF_TOOL_DIR)
+
+    opt.load('wwise' ,tooldir=CRY_WAF_TOOL_DIR)
+
+    # Load QT last as we need to hook the runnable status at the lowest level
+    opt.load('qt5' ,tooldir=CRY_WAF_TOOL_DIR)
+
+    ###########################################
+    # Add custom cryengine options
+    opt.add_option('-p', '--project-spec', dest='project_spec', action='store', default='', help='Spec to use when building the project')
+    opt.add_option('--profile-execution',  dest='profile_execution',action='store',default='',help='!INTERNAL ONLY! DONT USE')
+    opt.add_option('--update-settings',  dest='update_user_settings',action='store',default='False',help='Option to update the user_settings.options file with any values that are modified from the command line')
+
+    # Add special command line option to prevent recursive execution of WAF
+    opt.add_option('--internal-dont-check-recursive-execution', dest='internal_dont_check_recursive_execution', action='store', default='False', help='!INTERNAL ONLY! DONT USE')
+    opt.add_option('--internal-using-ib-dta',dest='internal_using_ib_dta',action='store',default='False',help='!INTERNAL ONLY! DONT USE')
+
+    # Add options primarily used by the Visual Studio WAF Addin
+    waf_addin_group = opt.add_option_group('Visual Studio WAF Addin Options')
+    waf_addin_group.add_option('-a', '--ask-for-user-input',     dest='ask_for_user_input',     action='store', default='False', help='Disables all user promps in WAF')
+    waf_addin_group.add_option(      '--file-filter',            dest='file_filter',            action='store', default="",      help='Only compile files matching this filter')
+    waf_addin_group.add_option(      '--show-includes',          dest='show_includes',          action='store', default='False', help='Show all files included (requieres a file_filter)')
+    waf_addin_group.add_option(      '--show-preprocessed-file', dest='show_preprocessed_file', action='store', default='False', help='Generate only Preprocessor Output (requieres a file_filter)')
+    waf_addin_group.add_option(      '--show-disassembly',       dest='show_disassembly',       action='store', default='False', help='Generate only Assembler Output (requieres a file_filter)')
+
+    # DEPRECATED OPTIONS, only used to keep backwards compatibility
+    waf_addin_group.add_option(      '--output-file',            dest='output_file',            action='store', default="",      help='*DEPRECATED* Specify Output File for Disassemly or Preprocess option (requieres a file_filter)')
+    waf_addin_group.add_option(      '--use-overwrite-file',     dest='use_overwrite_file',     action='store', default="False", help='*DEPRECATED* Use special BinTemp/lmbr_waf.configuration_overwrites to specify per target configurations')
+    waf_addin_group.add_option(      '--console-mode',           dest='console_mode',           action='store', default="True",  help='No Gui. Display console only')
+    
+    # Test specific options
+    if AZ_TEST_SUPPORTED:
+        test_group = opt.add_option_group('AzTestScanner Options')
+        test_group.add_option('--test-params', dest='test_params', action='store', default='', help='Test parameters to send to the scanner (encapsulate with quotes)')
+
+    # Lastly, load data driven settings
+    opt.load('default_settings', tooldir=CRY_WAF_TOOL_DIR)
+    opt.load('cryengine_modules', tooldir=CRY_WAF_TOOL_DIR)
+
+###############################################################################
+## Configure 'configure' step
+def configure(conf):
+
+    # From the wscript path, determine if there are spaces
+    wscript_full_path=os.path.dirname(os.path.realpath('wscript'))
+
+    ###########################################
+    # Load base configuration function
+    conf.load('c_config')
+    conf.load('cryengine_modules', tooldir=CRY_WAF_TOOL_DIR)
+
+    ###########################################
+    # Load common windows settings if needed
+    conf.load('winres', tooldir=CRY_WAF_TOOL_DIR)
+
+    # Load common platform scripts
+    waf_tool_dir = os.path.join(wscript_full_path,CRY_WAF_TOOL_DIR)
+    for compile_settings in PLATFORM_COMPILE_SETTINGS:
+        if os.path.exists(os.path.join(waf_tool_dir,compile_settings+'.py')):
+            conf.load(compile_settings, tooldir=CRY_WAF_TOOL_DIR)
+
+    if Utils.unversioned_sys_platform() == 'linux':
+        host = 'linux_x64'
+    elif Utils.unversioned_sys_platform() == 'win32':
+        host = 'win_x64'
+    elif Utils.unversioned_sys_platform() == 'darwin':
+        host = 'darwin_x64'
+    else:
+        conf.fatal('[ERROR] Host \'%s\' not supported' % Utils.unversioned_sys_platform())
+
+    # Bootstrap the build environment with bootstrap tool
+    conf.load('bootstrap', tooldir=CRY_WAF_TOOL_DIR)
+    bootstrap_param = getattr(conf.options,"bootstrap_tool_param","")
+    bootstrap_third_party_override = getattr(conf.options,"bootstrap_third_party_override","")
+    conf.run_bootstrap_tool(bootstrap_param, bootstrap_third_party_override)
+    
+    # now that 3rd Parties are present, we can start conf'ing them
+    if Utils.unversioned_sys_platform() != 'linux':    # linux does not require qt, and lacks the links for qt
+        conf.load('qt5' ,tooldir=CRY_WAF_TOOL_DIR)
+    
+    ###########################################
+    ## Load host settings
+    # Loads a file called compile_rules_(host type)_host.py
+    # which is expected to contain global settings that apply to a particular host type
+    # regardless of what it is currently compiling for.
+
+    conf.load('compile_rules_' + host + '_host', tooldir=CRY_WAF_TOOL_DIR)
+    host_function_name = 'load_%s_host_settings' % ( host )
+    if not hasattr(conf, host_function_name):
+        conf.fatal('[ERROR] Required Configuration Function \'%s\' not found' % host_function_name )
+
+    conf.add_game_projects_to_specs()
+    conf.add_gems_to_specs()
+
+    ###########################################
+    # handle disabling android here to avoid having the same block of code in each of the compile_rules 
+    # for all the current and future android targets
+    android_enabled = conf.get_env_file_var('ENABLE_ANDROID', required = False, silent = True)
+    if android_enabled != 'True':
+        android_targets = [target for target in conf.get_supported_platforms() if 'android' in target]
+
+        if android_targets:
+            Logs.warn('[WARN] Removing the following Android target platforms due to "Compile For Android" not checked in Setup Assistant.\n'
+                        '\t-> {}'.format(', '.join(android_targets)))
+
+            for android in android_targets:
+                 conf.mark_supported_platform_for_removal(android)
+
+    conf.clear_empty_platforms()
+
+    ###########################################
+    ## Load settings for all platforms
+    vanilla_conf = conf.env.derive() # grab a snapshot of conf before you pollute it.
+    installed_platforms = []
+    for platform in conf.get_supported_platforms():
+
+        platform_spec_vanilla_conf = conf.derive_configset_for_platform(vanilla_conf, platform)
+
+        compile_rule_script = 'compile_rules_' + host + '_' + platform
+        if not os.path.exists(os.path.join(waf_tool_dir,compile_rule_script+'.py')):
+            conf.mark_supported_platform_for_removal(platform)
+            continue
+
+        Logs.info('[INFO] Configure "%s - [%s]"' % (platform, ', '.join(conf.get_supported_configurations(platform))))
+        conf.load(compile_rule_script, tooldir=CRY_WAF_TOOL_DIR)
+        # platform installed
+        installed_platforms.append(platform)
+
+        for configuration in conf.get_supported_configurations():
+            # if the platform isn't going to generate a build command, don't require that the configuration exists either
+            if platform in PLATFORM_CONFIGURATION_FILTER:
+                if configuration not in PLATFORM_CONFIGURATION_FILTER[platform]:
+                    continue
+
+            conf.setenv(platform + '_' + configuration, platform_spec_vanilla_conf.derive())
+            conf.init_compiler_settings()
+
+            # add the host settings into the current env
+            getattr(conf, host_function_name)()
+
+            # Use the normal configurations as a base for dedicated server
+            is_dedicated = False
+            if configuration.endswith('_dedicated'):
+                configuration = configuration.replace('_dedicated', '')
+                is_dedicated = True
+            
+            # Use the normal configurations as a base for test
+            is_test = False
+            if '_test' in configuration:
+                configuration = configuration.replace('_test', '')
+                is_test = True
+
+            # Use the specialized function to load platform specifics
+            function_name = 'load_%s_%s_%s_settings' % ( configuration, host, platform )
+            if not hasattr(conf, function_name):
+                conf.fatal('[ERROR] Required Configuration Function \'%s\' not found' % function_name )
+
+            # Try to load the function
+            getattr(conf, function_name)()
+
+            # Apply specific dedicated server settings
+            if (is_dedicated):
+                getattr(conf, 'load_dedicated_settings')()
+                
+            # Apply specific test settings
+            if (is_test):
+                getattr(conf, 'load_test_settings')()
+
+    # some platform compile rules may have failed, remove those from the supported valid platforms
+    conf.clear_empty_platforms()
+
+    ###########################################
+    # Load support for c and cxx compiler
+    conf.load('c')
+    conf.load('cxx')
+
+    ###########################################
+    # Load Platform specific helpers based on host
+    host = Utils.unversioned_sys_platform()
+    if host == 'darwin':
+        conf.load('c_osx')
+
+    ###########################################
+    # Create VS-Projects automatically during configure when running on windows
+    if host == 'win32' and conf.is_option_true('generate_vs_projects_automatically'):
+        Options.commands.insert(0, 'msvs')
+
+    ###########################################
+    # Create Xcode-iOS-Projects automatically during configure when running on mac
+    if host == 'darwin' and conf.is_option_true('generate_ios_projects_automatically'):
+        # Workflow improvement: for all builds generate projects after the build
+        # except when using the default build target 'utilities' then do it before
+        if 'build' in Options.commands:
+            build_cmd_idx = Options.commands.index('build')
+            Options.commands.insert(build_cmd_idx, 'xcode_ios')
+        else:
+            Options.commands.append('xcode_ios')
+
+    ###########################################
+    # Create Xcode-AppleTV-Projects automatically during configure when running on mac
+    if host == 'darwin' and conf.is_option_true('generate_appletv_projects_automatically'):
+        # Workflow improvement: for all builds generate projects after the build
+        # except when using the default build target 'utilities' then do it before
+        if 'build' in Options.commands:
+            build_cmd_idx = Options.commands.index('build')
+            Options.commands.insert(build_cmd_idx, 'xcode_appletv')
+        else:
+            Options.commands.append('xcode_appletv')
+
+    ###########################################
+    # Create Xcode-darwin-Projects automatically during configure when running on mac
+    if host == 'darwin' and conf.is_option_true('generate_mac_projects_automatically'):
+        # Workflow improvement: for all builds generate projects after the build
+        # except when using the default build target 'utilities' then do it before
+        if 'build' in Options.commands:
+            build_cmd_idx = Options.commands.index('build')
+            Options.commands.insert(build_cmd_idx, 'xcode_mac')
+        else:
+            Options.commands.append('xcode_mac')
+
+    if any(platform for platform in conf.get_supported_platforms() if 'android' in platform):
+        # this is required for building any android projects. It adds the Android launchers
+        # to the list of build directories
+        android_builder_func = getattr(conf, 'create_and_add_android_launchers_to_build', None)
+        if android_builder_func != None and android_builder_func():
+            SUBFOLDERS.append(conf.get_android_project_relative_path())
+
+        # rebuild the project if invoked from android studio or sepcifically requested to do so
+        if conf.options.from_android_studio or conf.is_option_true('generate_android_studio_projects_automatically'):
+            if 'build' in Options.commands:
+                build_cmd_idx = Options.commands.index('build')
+                Options.commands.insert(build_cmd_idx, 'android_studio')
+            else:
+                Options.commands.append('android_studio')
+
+        # generate header
+        def _indent_text(indent_level, text, *args):
+            indent_space = ' ' * indent_level * 4
+            return str.format('{}{}', indent_space, text % args)
+
+        recordingMode = [
+            'AZ::Debug::AllocationRecords::Mode::RECORD_NO_RECORDS',
+            'AZ::Debug::AllocationRecords::Mode::RECORD_STACK_NEVER',
+            'AZ::Debug::AllocationRecords::Mode::RECORD_STACK_IF_NO_FILE_LINE',
+            'AZ::Debug::AllocationRecords::Mode::RECORD_FULL',
+            'AZ::Debug::AllocationRecords::Mode::RECORD_MAX',
+        ]
+
+        outputString = ""
+
+        outputString += "////////////////////////////////////////////////////////////////\n"
+        outputString += "// This file was automatically created by WAF\n"
+        outputString += "// WARNING! All modifications will be lost!\n"
+        outputString += "////////////////////////////////////////////////////////////////\n\n"
+
+        outputString += "void SetupAndroidDescriptor(const char* gameName, AZ::ComponentApplication::Descriptor &desc)\n{\n"
+
+        for project in conf.get_enabled_game_project_list():
+            targetFile = os.path.join(conf.path.abspath(),project,"Config","Game.xml")
+
+            tree = ET.parse(targetFile)
+            root = tree.getroot()
+            descriptor = root[0]
+
+            outputString += _indent_text(1, "if(stricmp(gameName, \"%s\") == 0)\n", project)
+            outputString += _indent_text(1, "{\n")
+            outputString += _indent_text(2, "desc.m_useExistingAllocator = %s;\n", descriptor.findall("*[@field='useExistingAllocator']")[0].get("value"))
+            outputString += _indent_text(2, "desc.m_grabAllMemory = %s;\n", descriptor.findall("*[@field='grabAllMemory']")[0].get("value"))
+            outputString += _indent_text(2, "desc.m_allocationRecords = %s;\n", descriptor.findall("*[@field='allocationRecords']")[0].get("value"))
+            outputString += _indent_text(2, "desc.m_autoIntegrityCheck = %s;\n", descriptor.findall("*[@field='autoIntegrityCheck']")[0].get("value"))
+            outputString += _indent_text(2, "desc.m_markUnallocatedMemory = %s;\n", descriptor.findall("*[@field='markUnallocatedMemory']")[0].get("value"))
+            outputString += _indent_text(2, "desc.m_doNotUsePools = %s;\n", descriptor.findall("*[@field='doNotUsePools']")[0].get("value"))
+            outputString += _indent_text(2, "desc.m_pageSize = %s;\n", descriptor.findall("*[@field='pageSize']")[0].get("value"))
+            outputString += _indent_text(2, "desc.m_poolPageSize = %s;\n", descriptor.findall("*[@field='poolPageSize']")[0].get("value"))
+            outputString += _indent_text(2, "desc.m_memoryBlockAlignment = %s;\n", descriptor.findall("*[@field='blockAlignment']")[0].get("value"))
+            outputString += _indent_text(2, "desc.m_memoryBlocksByteSize = %s;\n", descriptor.findall("*[@field='blockSize']")[0].get("value"))
+            outputString += _indent_text(2, "desc.m_reservedOS = %s;\n", descriptor.findall("*[@field='reservedOS']")[0].get("value"))
+            outputString += _indent_text(2, "desc.m_reservedDebug = %s;\n", descriptor.findall("*[@field='reservedDebug']")[0].get("value"))
+
+            if descriptor.find("*[@field='recordingMode']") is not None:
+                field = "recordingMode"
+            else:
+                field = "recordsMode"
+
+            id = int(descriptor.findall(str.format("*[@field='{}']", field))[0].get("value"))
+            outputString += _indent_text(2, "desc.m_recordingMode = %s;\n", recordingMode[id])
+
+            outputString += _indent_text(2, "desc.m_stackRecordLevels = %s;\n", descriptor.findall("*[@field='stackRecordLevels']")[0].get("value"))
+            outputString += _indent_text(2, "desc.m_enableDrilling = %s;\n", descriptor.findall("*[@field='enableDrilling']")[0].get("value"))
+            outputString += _indent_text(2, "desc.m_x360IsPhysicalMemory = %s;\n", descriptor.findall("*[@field='x360PhysicalMemory']")[0].get("value"))
+
+            modulesElement = descriptor.findall("*[@field='modules']")[0]
+            for moduleEntry in modulesElement.findall("*[@field='element']"):
+                outputString += _indent_text(2, "desc.m_modules.push_back();\n")
+                outputString += _indent_text(2, "desc.m_modules.back().m_dynamicLibraryPath = \"%s\";\n", moduleEntry.findall("*[@field='dynamicLibraryPath']")[0].get("value"))
+            outputString += _indent_text(1, "}\n")
+
+        outputString += "}\n"
+
+        filePath = os.path.join(conf.path.abspath(),"Code","Launcher","AndroidLauncher","android_descriptor.h")
+        fp = open( filePath,'w')
+        fp.write(outputString)
+        fp.close()
+
+
+    ###########################################
+    # Recurse into subfolders for auto conf when any wscript changes
+    conf.recurse(dirs=SUBFOLDERS)
+
+    # Load Game Specific parts
+    for project in conf.get_enabled_game_project_list():
+        conf.game_project = project
+        conf.recurse( conf.game_code_folder(project))
+
+    conf.process_gems()
+
+    if conf.options.update_user_settings == 'True':
+        conf.update_settings_options_file()
+
+    ###########################################
+    # Always update uber files during configuration
+    # But don't add the same command twice
+    if len(Options.commands) == 0:
+        Options.commands.insert(0, 'generate_uber_files')
+        Options.commands.insert(1, 'generate_module_def_files')
+    else:
+        has_generate_uber_files = 'generate_uber_files' in Options.commands
+        has_generate_module_def_files = 'generate_module_def_files' in Options.commands
+        if not has_generate_uber_files:
+            Options.commands.insert(0, 'generate_uber_files')
+        if not has_generate_module_def_files:
+            Options.commands.insert(1, 'generate_module_def_files')
+
+    # Remove timestamp files to force builds of generate_uber_files and project gen even if
+    # some command after configure failes
+    try:
+        generate_uber_files_timestamp = conf.get_bintemp_folder_node().make_node('generate_uber_files.timestamp')
+        os.stat(generate_uber_files_timestamp.abspath())
+    except OSError:
+        pass
+    else:
+        generate_uber_files_timestamp.delete()
+
+    try:
+        project_gen_timestamp = conf.get_bintemp_folder_node().make_node('project_gen.timestamp')
+        os.stat(project_gen_timestamp.abspath())
+    except OSError:
+        pass
+    else:
+        project_gen_timestamp.delete()
+
+def post_command_exec(bld):
+    # [post project gen]
+    if bld.cmd == 'msvs':
+        project_gen_timestamp = bld.get_bintemp_folder_node().make_node('project_gen.timestamp')
+        project_gen_timestamp.write('')
+    # [post uberfile gen]
+    elif bld.cmd == 'generate_uber_files':
+        generate_uber_files_timestamp = bld.get_bintemp_folder_node().make_node('generate_uber_files.timestamp')
+        generate_uber_files_timestamp.write('')
+    # [post build]
+    elif bld.cmd.startswith('build'):
+        for message in bld.post_build_msg_info:
+            Logs.info(message)
+
+        for message in bld.post_build_msg_warning:
+            Logs.warn(message)
+
+        for message in bld.post_build_msg_error:
+            Logs.error(message)
+
+stored_file_filter = ''
+stored_output_file = ''
+
+
+###############################################################################
+# Run 'build' step
+def build(bld):
+
+    # Only Build Context objects are valid here
+    if not isinstance(bld, BuildContext):
+        raise WafError("[Error] Invalid build command: '{}'.  Type in '{} --help' for more information".format(bld.cmd if hasattr(bld, 'cmd') else str(bld), CURRENT_WAF_EXECUTABLE))
+
+    #If the user wants to build a monolithic build for Mac add the platform to the list
+    if bld.is_option_true('mac_build_monolithic'):
+        MONOLITHIC_BUILDS.append( 'darwin')
+
+    bld.load_user_settings()
+
+    bld.set_supported_platforms( bld.get_validated_platforms() )
+
+    bld.options.project_spec = bld.options.project_spec.strip()  # remove spaces
+
+    # Validate the game project version
+    if VERSION_NUMBER_PATTERN.match(bld.options.version) is None:
+        Logs.error("[Error] Invalid game version number format ({})".format(bld.options.version))
+
+    # Create a post build message container
+    bld.post_build_msg_info = []
+    bld.post_build_msg_warning = []
+    bld.post_build_msg_error = []
+
+    bld.add_group('az_code_gen_group')
+    bld.add_group('regular_group')
+    bld.set_group('regular_group')
+
+    bld.add_gems_to_specs()
+    bld.add_game_projects_to_specs()
+
+    ###########################################
+    # Load common windows settings if needed
+    bld.load('winres', tooldir=CRY_WAF_TOOL_DIR)
+
+    # Check if a valid spec is defined
+    if bld.cmd not in ['generate_uber_files', 'generate_module_def_files', 'msvs', 'eclipse', 'android_studio', 'xcode_ios', 'xcode_appletv', 'xcode_mac' ]:
+
+        # project spec is a mandatory parameter for build commands that perform monolithic builds
+        if bld.is_cmd_monolithic():
+            Logs.debug('lumberyard: Processing monolithic build command ')
+            # For monolithic builds, the project spec is required
+            if bld.options.project_spec == '':
+                bld.fatal('[ERROR] No Project Spec defined. Project specs are required for monolithic builds.  Use "-p <spec_name>" command line option to specify project spec. Valid specs are "%s". ' % bld.loaded_specs())
+
+            # Ensure that the selected spec is supported on this platform
+            if not bld.options.project_spec in bld.loaded_specs():
+                bld.fatal('[ERROR] Invalid Project Spec (%s) defined, valid specs are %s' % (bld.options.project_spec, bld.loaded_specs()))
+
+        # Check for valid single file compilation flag pairs
+        if bld.is_option_true('show_preprocessed_file') and bld.options.file_filter == "":
+            bld.fatal('--show-preprocessed-file can only be used in conjunction with --file-filter')
+        elif bld.is_option_true('show_disassembly') and bld.options.file_filter == "":
+            bld.fatal('--show-disassembly can only be used in conjunction with --file-filter')
+
+    ###########################################
+    # Check timestamps for special commands
+    if not 'generate_uber_files' in Options.commands and bld.cmd != 'generate_uber_files':
+        generate_uber_files_timestamp = bld.get_bintemp_folder_node().make_node('generate_uber_files.timestamp')
+        try:
+            os.stat(generate_uber_files_timestamp.abspath())
+        except OSError:
+            # No generate_uber file timestamp, restart command chain, prefixed with gen uber files cmd
+            Options.commands = ['generate_uber_files'] + [bld.cmd] + Options.commands
+            return
+
+    ###########################################
+    # Check for valid variant if we are not generating projects
+    if bld.cmd in ['generate_uber_files', 'generate_module_def_files', 'msvs', 'eclipse', 'android_studio', 'xcode_ios', 'xcode_appletv', 'xcode_mac' ]:
+        bld.env['PLATFORM'] = 'project_generator'
+        bld.env['CONFIGURATION'] = 'project_generator'
+    else:
+        if not bld.variant:
+            bld.fatal('please use a valid build configuration, try "waf --help"')
+
+        (platform, configuration) = bld.get_platform_and_configuration()
+        bld.env['PLATFORM'] = platform
+        bld.env['CONFIGURATION'] = configuration
+
+        if not platform in bld.get_supported_platforms():
+            bld.fatal( '[ERROR] - Target platform "%s" not supported. [on host platform: %s]' % (platform, Utils.unversioned_sys_platform()) )
+        # make sure the android launchers are included in the build
+        if bld.env['PLATFORM'] in ('android_armv7_gcc', 'android_armv7_clang'):
+            android_path = os.path.join(bld.path.abspath(), bld.get_android_project_relative_path(), 'wscript')
+            if not os.path.exists(android_path):
+                bld.fatal('[ERROR] Android launchers not correctly configured. Run \'configure\' again')
+            SUBFOLDERS.append(bld.get_android_project_relative_path())
+
+        # If a spec was supplied, check for platform limitations
+        if bld.options.project_spec != '':
+            validated_platforms = bld.preprocess_platform_list(bld.spec_platforms(), True)
+            if platform not in validated_platforms:
+                bld.fatal('[ERROR] - Target platform "{}" not supported for spec {}'.format(platform, bld.options.project_spec))
+            validated_configurations = bld.preprocess_configuration_list(None, platform, bld.spec_configurations(), True)
+            if configuration not in validated_configurations:
+                bld.fatal('[ERROR] - Target configuration "{}" not supported for spec {}'.format(configuration, bld.options.project_spec))
+
+        if bld.is_cmd_monolithic():
+            if len(bld.spec_modules()) == 0:
+                bld.fatal('[ERROR] no available modules to build for that spec "%s" in "%s|%s"' % (bld.options.project_spec, platform, configuration))
+
+            # Ensure that, if specified, target is supported in this spec
+            if bld.options.targets:
+                for target in bld.options.targets.split(','):
+                    if not target in bld.spec_modules():
+                        bld.fatal('[ERROR] Module "%s" is not configured to build in spec "%s" in "%s|%s"' % (target, bld.options.project_spec, platform, configuration))
+
+        deploy_cmd = 'deploy_' + platform + '_' + configuration
+        if 'build' in bld.cmd and platform in ['durango', 'orbis', 'android_armv7_gcc', 'android_armv7_clang'] and deploy_cmd not in Options.commands:
+            Options.commands.append(deploy_cmd)
+
+    ###########################################
+    # Check if we need to start ourself recursively for IB
+    if bld.InvokedWAFRecursivly(USE_LOCAL_PYTHON):
+        return
+
+    ###########################################
+    bld.add_post_fun(post_command_exec)
+
+    ###########################################
+    # Setup Output Path for Project Generators
+    bld.solution_name = bld.get_solution_name()
+    bld.projects_dir = bld.get_project_output_folder()
+
+    ###########################################
+    # Load configuration overwrites
+    bld.env['CONFIG_OVERWRITES'] = bld.get_solution_overrides()
+
+    ###########################################
+    # Load support for common CryEngine Module wrapper
+    bld.load('cryengine_modules', tooldir=CRY_WAF_TOOL_DIR)
+
+    bld.RegisterAWSNativeSDKLibaries()
+    bld.RegisterGameLiftLibaries()
+
+    # Load Core Engine Parts (Engine, Tools, Core Shaders etc)
+    bld.game_project = None
+    bld.recurse(SUBFOLDERS)
+
+    bld.process_gems()
+
+    # Load Game Specific parts, but only if the current spec is a game...
+    if bld.env['CONFIGURATION'] == 'project_generator' or not bld.spec_disable_games():
+        # If this bld command is to generate the use maps, then recurse all of the game projects, otherwise
+        # only recurse the enabled game project
+        game_project_list = bld.game_projects() if bld.cmd == 'generate_module_def_files' \
+                                                else bld.get_enabled_game_project_list()
+        for project in game_project_list:
+            bld.game_project = project
+            bld.recurse( bld.game_code_folder(project))
+    else:
+        Logs.debug('lumberyard:  Not recursing into game directories since no games are set up to build in current spec')
+        
+    # Save current build environment so that later commands in a chain can make use of the information (ex. run_tests)
+    if 'build' in bld.cmd:
+        bld.env.store(os.path.join(bld.cache_dir, 'last_build_cache.py'))
+
+def deploy(ctx):
+    if not ctx.variant:
+        ctx.fatal('Deploy task does not have a variant specified, cannot continue')
+    if not hasattr(ctx, 'features') or ctx.features is None:
+        ctx.fatal('Deploy task does not have any deployment features attached to it')
+    (platform, configuration) = ctx.get_platform_and_configuration()
+    ctx.env['PLATFORM'] = platform
+    ctx.env['CONFIGURATION'] = configuration
+    ctx(features=ctx.features)
+
+###############################################################################
+# Create Build Context Commands for multiple platforms/configurations
+for platform in PLATFORMS[Utils.unversioned_sys_platform()]:
+    for configuration in CONFIGURATIONS:
+        # for platform/for configuration generates invalid configurations
+        # if a filter exists, don't generate all combinations
+        if platform in PLATFORM_CONFIGURATION_FILTER:
+            if configuration not in PLATFORM_CONFIGURATION_FILTER[platform]:
+                continue
+        # Create new class to execute build with variant
+        name = CleanContext.__name__.replace('Context','').lower()
+        class tmp_build(CleanContext):
+            cmd = name + '_' + platform + '_' + configuration
+            variant = platform + '_' + configuration
+
+            def __init__(self, **kw):
+                super(CleanContext, self).__init__(**kw)
+                self.top_dir = kw.get('top_dir', Context.top_dir)
+
+            def execute(self):
+                if Configure.autoconfig:
+                    env = ConfigSet.ConfigSet()
+
+                    do_config = False
+                    try:
+                        env.load(os.path.join(Context.lock_dir, Options.lockfile))
+                    except Exception:
+                        Logs.warn('Configuring the project')
+                        do_config = True
+                    else:
+                        if env.run_dir != Context.run_dir:
+                            do_config = True
+                        else:
+                            h = 0
+                            for f in env['files']:
+                                try:
+                                    h = hash((h, Utils.readf(f, 'rb')))
+                                except (IOError, EOFError):
+                                    pass # ignore missing files (will cause a rerun cause of the changed hash)
+                            do_config = h != env.hash
+
+                    if do_config:
+                        Options.commands.insert(0, self.cmd)
+                        Options.commands.insert(0, 'configure')
+                        return
+
+                # Execute custom clear command
+                self.restore()
+                if not self.all_envs:
+                    self.load_envs()
+                self.recurse([self.run_dir])
+
+                if self.options.targets:
+                    self.target_clean()
+                else:
+                    try:
+                        self.clean_output_targets()
+                        self.clean()
+                    finally:
+                        self.store()
+
+
+        # Create new class to execute clean with variant
+        name = BuildContext.__name__.replace('Context','').lower()
+        class tmp_clean(BuildContext):
+            cmd = name + '_' + platform + '_' + configuration
+            variant = platform + '_' + configuration
+        
+	# Create derived build class to execute host tools build for host + profile only
+        host = Utils.unversioned_sys_platform()
+        if platform in ["win_x64", "linux_x64", "darwin_x64"] and configuration == 'profile':
+            class tmp_build_host_tools(tmp_clean):
+                cmd = 'build_host_tools'
+                variant = platform + '_' + configuration
+                def execute(self):
+                    original_project_spec = self.options.project_spec
+                    original_targets = self.targets
+                    self.options.project_spec = 'host_tools'
+                    self.targets = []
+                    super(tmp_build_host_tools, self).execute()
+                    self.options.project_spec = original_project_spec
+                    self.targets = original_targets
+
+
+
+########################################################################################################
+# Check the incredibuild parameters and environment to see if we need to invoke waf through incredibuild
+@conf
+def InvokedWAFRecursivly(bld, use_local_python):
+
+    if not WINREG_SUPPORTED:
+        return False # We can't run incredibuild on systems that don't support windows registry
+    if not Utils.unversioned_sys_platform() == 'win32':
+        return False # Don't use recursive execution on non-windows hosts
+    if bld.is_option_true('internal_dont_check_recursive_execution'):
+        return False
+    if 'clean_' in bld.cmd:
+        return	False
+    if 'generate_uber_files' in bld.cmd:
+        return False
+    if 'generate_module_def_files' in bld.cmd:
+        return False
+    if 'msvs' in bld.cmd:
+        return False
+    if 'android_studio' in bld.cmd:
+        return False
+    if 'host_tools' in bld.cmd:
+        return False
+    # Don't use IB for special single file operations
+    if bld.is_option_true('show_includes'):
+        return False
+    if bld.is_option_true('show_preprocessed_file'):
+        return False
+    if bld.is_option_true('show_disassembly'):
+        return False
+    if bld.options.file_filter != "":
+        return False
+
+    if not bld.is_option_true('use_incredibuild'):
+        Logs.warn('[WARNING] Incredibuild disabled by build option')
+        return False
+
+    try:
+        # Get correct incredibuild installation folder to not depend on PATH
+        IB_settings = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, "Software\\Wow6432Node\\Xoreax\\Incredibuild\\Builder", 0, _winreg.KEY_READ)
+        (ib_folder,type) = _winreg.QueryValueEx(IB_settings, 'Folder')
+    except:
+        Logs.warn('[WARNING] Incredibuild disabled.  Cannot find incredibuild installation.')
+        return False
+
+    # Check if we can execute remotely with our current licenses
+    if not bld.is_option_true('use_incredibuild_win') and ('win32' in bld.cmd or 'win64' in bld.cmd):
+        Logs.warn('[WARNING] Incredibuild for Windows targets disabled by build option')
+        return False
+
+    if not bld.is_option_true('use_incredibuild_win') and ('win_x86' in bld.cmd or 'win_x64' in bld.cmd):
+        Logs.warn('[WARNING] Incredibuild for Windows targets disabled by build option')
+        return False
+
+    if not bld.is_option_true('use_incredibuild_durango') and 'durango' in bld.cmd:
+        Logs.warn('[WARNING] Incredibuild for Durango targets disabled by build option')
+        return False
+
+    if not bld.is_option_true('use_incredibuild_orbis') and 'orbis' in bld.cmd:
+        Logs.warn('[WARNING] Incredibuild for Orbis targets disabled by build option')
+        return False
+
+    if not bld.is_option_true('use_incredibuild_android') and 'android' in bld.cmd:
+        Logs.warn('[WARNING] Incredibuild for Android targets disabled by build option')
+        return False
+
+    result = subprocess.check_output([ str(ib_folder) + '/xgconsole.exe', '/QUERYLICENSE'])
+
+    # Make & Build Tools is required
+    if not 'Make && Build Tools' in result:
+        Logs.warn('Required Make && Build Tools Package not found.  Build will not be accelerated through Incredibuild')
+        return False
+
+    # Determine if the Dev Tool Acceleration package is available.  This package is required for Orbis and Durango
+    dev_tool_accelerated = 'IncrediBuild for Dev Tool Acceleration' in result
+
+    # Orbis builds need the Playstation extension and Dev Tool Acceleration Packages
+    if 'orbis' in bld.cmd:
+        if not 'IncrediBuild for PlayStation' in result:
+            Logs.warn('Playstation Extension Package not found! Build will not be accelerated through Incredibuild.')
+            return False
+        if not dev_tool_accelerated:
+            Logs.warn('Dev Tool Acceleration Package not found! Required in conjunction with the Playstation Extension Package.  Build will not be accelerated through Incredibuild.')
+            return False
+
+    # Durango builds need the XBox One extension and Dev Tool Acceleration Packages
+    if 'durango' in bld.cmd:
+        if not 'IncrediBuild for Xbox One' in result:
+            Logs.warn('Xbox One Extension Package not found! Build will not be accelerated through Incredibuild.')
+            return False
+        if not dev_tool_accelerated:
+            Logs.warn('Dev Tool Acceleration Package not found! Required in conjunction with the Xbox One Extension Package.  Build will not be accelerated through Incredibuild.')
+            return False
+
+    # Windows builds can be run without the Dev Tools Acceleration Package, but won't distribute Qt tasks.
+    if ('win_x86' in bld.cmd or 'win_x64' in bld.cmd) and not dev_tool_accelerated:
+        pass
+
+    if not dev_tool_accelerated:
+        Logs.warn('Dev Tool Acceleration Package not found.   Qt tasks will not be distributed through Incredibuild')
+
+    # Get all specific commands, but keep msvs to execute after IB has finished
+    bExecuteMSVS = False
+    if 'msvs' in Options.commands:
+        bExecuteMSVS = True
+
+    Options.commands = []
+    cmd_line_args = []
+    for arg in sys.argv[1:]:
+        if arg == 'generate_uber_files':
+            continue
+        if arg == 'generate_module_def_files':
+            continue
+        if arg == 'msvs':
+            bExecuteMSVS = True
+            continue
+        if ' ' in arg and '=' in arg: # replace strings like "--build-options=c:/root with spaces in it/file" with "--build-options=file"
+            command, path_val = string.split(arg, '=')
+            path_val = os.path.relpath(path_val)
+            arg = command + '=' + path_val
+        cmd_line_args += [ arg ]
+
+    if bExecuteMSVS: # Execute MSVS without IB
+        Options.commands += [ 'msvs' ]
+
+    command_line_options = ' '.join(cmd_line_args) # Recreate command line
+
+    # Add special option to not start IB from within IB
+    command_line_options += ' --internal-dont-check-recursive-execution=True'
+
+    # Add special option to signal the build system which IB tool is being executed
+    command_line_options += ' --internal-using-ib-dta={}'.format('True' if dev_tool_accelerated else 'False')
+
+    num_jobs = bld.options.incredibuild_max_cores
+
+    # Build Command Line
+    command = CURRENT_WAF_EXECUTABLE + ' --jobs=' + str(num_jobs) + ' ' + command_line_options
+
+    sys.stdout.write('[WAF] Starting Incredibuild: ')
+
+    process_call = []
+    if dev_tool_accelerated:
+        process_call.append(str(ib_folder) + '/xgconsole.exe')
+        process_call.append('/profile=Code\\Tools\\waf-1.7.13\profile.xml')
+    else:
+        process_call.append(str(ib_folder) + '/buildconsole.exe')
+
+    process_call.append('/command=' + command)
+    process_call.append('/useidemonitor')
+    process_call.append('/nologo')
+
+    if use_local_python:
+        process_call.append('/SETENV=\"PYTHONHOME=Code\\SDKs\\Python\\x64\"')
+        process_call.append('/SETENV=\"PYTHONPATH="')
+    Logs.debug('incredibuild: Cmdline: ' + str(process_call))
+    if subprocess.call(process_call, env=os.environ.copy()):
+        raise BuildError()
+
+    return True
+
+
+###############################################################################
+def wrap_execute(execute_method):
+    """
+    Decorator used to set the commands that can be configured automatically
+    """
+    def execute(self):
+        # Make sure to create all needed temp folders
+        bin_temp = self.get_bintemp_folder_node()
+        bin_temp.mkdir()
+        tmp_files_folder = bin_temp.make_node('TempFiles')
+        tmp_files_folder.mkdir()
+
+        # Before executing any build or configure commands, check for config file
+        # and for bootstrap updates
+        self.load_user_settings()
+
+        return execute_method(self)
+
+    return execute
+
+BuildContext.execute = wrap_execute(BuildContext.execute)
+ConfigurationContext.execute = wrap_execute(ConfigurationContext.execute)
+
+
+###############################################################################
+def show_option_dialog(ctx):
+    ctx.gui_modify_user_options()
+
+
+###############################################################################
+class execute_waf_options_dialog(BuildContext):
+    ''' Util class to execute waf options dialog  '''
+    cmd = 'show_option_dialog'
+    fun = 'show_option_dialog'
+
+
+###############################################################################
+if AZ_TEST_SUPPORTED:
+    def run_tests(ctx):
+        """ Runs tests using the AzTestScanner """
+        # Start by grabbing the full args from command line
+        args = ['scan']
+        if ctx.options.test_params:
+            args += ctx.options.test_params.split()
+        
+        # Convenience function to check for flags in args
+        def has_params(args, *params):
+            return any(x in args for x in params)
+        
+        # If we are chaining, we want the cached info from the last build command
+        # We do not override parameters that are passed in by the user (ex. the dir to test)
+        ctx.env.load(os.path.join(ctx.cache_dir, 'last_build_cache.py'))
+        if not has_params(args, '-d', '--dir'):
+            args += ['--dir', ctx.get_output_folders(ctx.env['PLATFORM'], ctx.env['CONFIGURATION'])[0].abspath()]
+        if not has_params(args, 'o', '--only') and ctx.options.targets:
+            args += ['--only', ctx.options.targets]
+        if not has_params(args, '--whitelist', '--whitelist-file') and ctx.options.project_spec:
+            args += ['--whitelist-file', os.path.join('_WAF_', 'specs', '{}.json'.format(ctx.options.project_spec))]
+        
+        aztest.execute(args)
+    
+    
+    class RunTestsContext(BuildContext):
+        cmd = 'run_tests'
+        fun = 'run_tests'

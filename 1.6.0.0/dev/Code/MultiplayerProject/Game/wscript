@@ -1,0 +1,109 @@
+########################################################################################
+# All or portions of this file Copyright (c) Amazon.com, Inc. or its affiliates or
+# its licensors.
+#
+# For complete copyright and license terms please see the LICENSE at the root of this
+# distribution (the "License"). All use of this software is governed by the License,
+# or, if provided, by the license below or the license accompanying this file. Do not
+# remove or modify any license notices. This file is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#
+########################################################################################
+
+def build(bld):
+
+    bld.CryEngineModule(
+
+        #==============================
+        # Settings
+        #==============================
+        target      = 'MultiplayerProject',
+        vs_filter   = 'Game/MultiplayerProject',
+        file_list   = 'game.waf_files',
+        platforms   = ['all'],
+        configurations  = ['all'],
+        pch         = 'StdAfx.cpp',
+        use         = ['AzGameFramework',
+                       'GridMate'],
+        use_gems    = True,
+
+        #==============================
+        # Common
+        #==============================
+        includes    = [ '.' ,
+                        bld.Path('Code/CryEngine/CryCommon'),
+                        bld.Path('Code/CryEngine/CryAction'),
+                        bld.Path('Code/CryEngine/CryNetwork'),
+                        bld.Path('Code/Engine/LmbrCentral/include')],
+
+        profile_defines = ['AZ_DEBUG_BUILD'],
+        profile_dedicated_defines = ['AZ_DEBUG_BUILD'],
+
+        #==============================
+        # Windows
+        #==============================
+        win_features    = ['AWSNativeSDK','AWSGameLift'],
+        win_debug_use = bld.make_aws_library_task_list(['aws-cpp-sdk-core', 'aws-cpp-sdk-gamelift', 'aws-cpp-sdk-gamelift-client']),
+        win_profile_use = bld.make_aws_library_task_list(['aws-cpp-sdk-core', 'aws-cpp-sdk-gamelift', 'aws-cpp-sdk-gamelift-client']),
+        win_performance_use = bld.make_aws_library_task_list(['aws-cpp-sdk-core', 'aws-cpp-sdk-gamelift', 'aws-cpp-sdk-gamelift-client']),
+        win_release_use = bld.make_aws_library_task_list(['aws-cpp-sdk-core', 'aws-cpp-sdk-gamelift', 'aws-cpp-sdk-gamelift-client']),
+        win_debug_dedicated_use = bld.make_aws_library_task_list(['aws-cpp-sdk-gamelift-server']),
+        win_profile_dedicated_use = bld.make_aws_library_task_list(['aws-cpp-sdk-gamelift-server']),
+        win_performance_dedicated_use = bld.make_aws_library_task_list(['aws-cpp-sdk-gamelift-server']),
+        win_release_dedicated_use = bld.make_aws_library_task_list(['aws-cpp-sdk-gamelift-server']),
+        win_lib         = ['gdi32', 'WinHTTP', 'Ws2_32', 'mswsock'],
+
+
+        #==============================
+        # Linux
+        #==============================
+        linux_features    = ['AWSNativeSDK','AWSGameLift'],
+        linux_debug_dedicated_use = bld.make_aws_library_task_list(['aws-cpp-sdk-gamelift-server']),
+        linux_profile_dedicated_use = bld.make_aws_library_task_list(['aws-cpp-sdk-gamelift-server']),
+        linux_performance_dedicated_use = bld.make_aws_library_task_list(['aws-cpp-sdk-gamelift-server']),
+        linux_release_dedicated_use = bld.make_aws_library_task_list(['aws-cpp-sdk-gamelift-server']),
+        linux_defines = ['NET_SUPPORT_SECURE_SOCKET_DRIVER=1'],
+        linux_x64_lib = ['ssl', 'crypto', 'sioclient', 'boost_date_time', 'boost_random', 'boost_system', 'protobuf'],
+        linux_debug_all_libpath = [bld.Path('Code/SDKs/OpenSSL/lib/linux-x86_64-clang-debug'),
+                                   bld.Path('Code/SDKs/GameLiftServerSDK/dependencies/socket.io-client-cpp/lib/linux/debug'),
+                                   bld.Path('Code/SDKs/GameLiftServerSDK/dependencies/boost/lib/linux/debug'),
+                                   bld.Path('Code/SDKs/GameLiftServerSDK/dependencies/protobuf/lib/linux/debug')],
+        linux_profile_all_libpath = [bld.Path('Code/SDKs/OpenSSL/lib/linux-x86_64-clang-release'),
+                                     bld.Path('Code/SDKs/GameLiftServerSDK/dependencies/socket.io-client-cpp/lib/linux/release'),
+                                     bld.Path('Code/SDKs/GameLiftServerSDK/dependencies/boost/lib/linux/release'),
+                                     bld.Path('Code/SDKs/GameLiftServerSDK/dependencies/protobuf/lib/linux/release')],
+        linux_release_all_libpath = [bld.Path('Code/SDKs/OpenSSL/lib/linux-x86_64-clang-release'),
+                                     bld.Path('Code/SDKs/GameLiftServerSDK/dependencies/socket.io-client-cpp/lib/linux/release'),
+                                     bld.Path('Code/SDKs/GameLiftServerSDK/dependencies/boost/lib/linux/release'),
+                                     bld.Path('Code/SDKs/GameLiftServerSDK/dependencies/protobuf/lib/linux/release')],
+
+        #==============================
+        # iOS
+        # 'ios_output_file_name' must match both
+        # 'executable_name' in 'project.json' and
+        # 'Executable file' in '../Resources/IOSLauncher/Info.plist'
+        #==============================
+        ios_output_file_name = 'MultiplayerProjectLauncher',
+        ios_file_list = ['game_ios.waf_files'],
+
+        #==============================
+        # AppleTV
+        # ‘appletv_output_file_name' must match both
+        # 'executable_name' in 'project.json' and
+        # 'Executable file' in '../Resources/AppleTVLauncher/Info.plist'
+        #==============================
+        appletv_output_file_name = 'MultiplayerProjectLauncher',
+        appletv_file_list = ['game_appletv.waf_files'],
+
+        #==============================
+        # Darwin
+        #==============================
+        darwin_file_list = ['game_mac.waf_files'],
+       
+       
+        
+        #==============================
+        # Testing
+        #==============================
+        test_all_file_list = ['game_tests.waf_files'],
+    )

@@ -1,0 +1,6 @@
+{
+    "ENABLE_ANDROID": "True",
+    "LY_ANDROID_NDK": "d:\\ly\\3rdParty\\android-ndk\\r11",
+    "LY_ANDROID_SDK": "D:\\Android\\android-sdk",
+    "LY_JDK": "D:/BuildMachine/jdk1.7.0_79"
+}

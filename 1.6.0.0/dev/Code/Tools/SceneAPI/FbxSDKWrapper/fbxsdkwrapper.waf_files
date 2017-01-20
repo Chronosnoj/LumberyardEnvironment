@@ -1,0 +1,38 @@
+{
+   "none":
+    {
+        "Source Files":
+        [
+            "FbxSceneWrapper.cpp",
+            "FbxAnimStackWrapper.cpp",
+            "FbxNodeWrapper.cpp",
+            "FbxMeshWrapper.cpp",
+            "FbxSkinWrapper.cpp",
+            "FbxPropertyWrapper.cpp",
+            "FbxMaterialWrapper.cpp",
+            "FbxTimeWrapper.cpp",
+            "FbxTypeConverter.cpp",
+            "FbxAxisSystemWrapper.cpp",
+            "FbxSystemUnitWrapper.cpp",
+            "FbxVertexColorWrapper.cpp",
+            "FbxUVWrapper.cpp",
+            "FbxLayerElementUtilities.inl",
+            "stdafx.cpp",
+            "FbxSceneWrapper.h",
+            "FbxAnimStackWrapper.h",
+            "FbxNodeWrapper.h",
+            "FbxMeshWrapper.h",
+            "FbxSkinWrapper.h",
+            "FbxPropertyWrapper.h",
+            "FbxMaterialWrapper.h",
+            "FbxTimeWrapper.h",
+            "FbxTypeConverter.h",
+            "FbxAxisSystemWrapper.h",
+            "FbxSystemUnitWrapper.h",
+            "FbxVertexColorWrapper.h",
+            "FbxUVWrapper.h",
+            "FbxLayerElementUtilities.h",
+            "stdafx.h"
+        ]
+    }
+}

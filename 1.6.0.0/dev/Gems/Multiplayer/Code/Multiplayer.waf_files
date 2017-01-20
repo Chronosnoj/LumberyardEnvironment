@@ -1,0 +1,31 @@
+{
+    "none": {
+        "Source": [
+            "Source/StdAfx.cpp",
+            "Source/StdAfx.h"
+        ]
+    },
+    "auto": {
+        "Include": [
+            "Include/Multiplayer/FlowMultiplayerNodes.h",
+            "Include/Multiplayer/IMultiplayerGem.h",
+            "Include/Multiplayer/MultiplayerLobbyComponent.h",
+            "Include/Multiplayer/MultiplayerUtils.h"
+        ],
+        "Source/FlowGraph": [
+            "Source/FlowMultiplayerNodes.cpp",
+            "Source/FlowMultiplayerEventNodes.cpp",
+            "Source/FlowMultiplayerFunctionNodes.cpp",
+            "Source/GameLiftFlowNodes.cpp"
+        ],
+        "Source": [
+            "Source/MultiplayerLobbyComponent.cpp",
+            "Source/MultiplayerGem.h",
+            "Source/MultiplayerGem.cpp",
+            "Source/MultiplayerCVars.h",
+            "Source/MultiplayerCVars.cpp",
+            "Source/GameLiftListener.h",
+            "Source/GameLiftListener.cpp"
+        ]
+    }
+}

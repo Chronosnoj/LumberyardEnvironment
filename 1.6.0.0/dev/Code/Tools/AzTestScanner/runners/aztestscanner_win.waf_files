@@ -1,0 +1,17 @@
+{
+    "none":
+    {
+        "Source Files/Windows":
+        [
+            "win/main.cpp",
+            "win/main.h",
+            "win/main_win.cpp",
+            "win/utils.h", 
+            "win/utils.cpp"
+        ],
+        "Source Files/Test":
+        [
+            "test/RunnerTest.cpp"
+        ]
+    }
+}

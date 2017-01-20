@@ -1,0 +1,27 @@
+{
+    "auto": {
+        "Source": [
+            "Source/StaticDataInterface.h",
+            "Source/StaticDataManager.h",
+            "Source/StaticDataManager.cpp",
+            "Source/StaticDataTransferManager.h",
+            "Source/StaticDataTransferManager.cpp",
+            "Source/CSVStaticData.h",
+            "Source/CSVStaticData.cpp"
+        ],
+        "Nodes": [
+            "Nodes/FlowNode_GetStaticData.h",
+            "Nodes/FlowNode_GetStaticData.cpp",
+            "Nodes/FlowNode_LoadStaticData.h",
+            "Nodes/FlowNode_LoadStaticData.cpp",
+            "Nodes/FlowNode_AddMonitoredBucket.h",
+            "Nodes/FlowNode_AddMonitoredBucket.cpp",
+            "Nodes/FlowNode_RemoveMonitoredBucket.h",
+            "Nodes/FlowNode_RemoveMonitoredBucket.cpp",
+            "Nodes/FlowNode_RequestBucket.h",
+            "Nodes/FlowNode_RequestBucket.cpp",
+            "Nodes/FlowNode_SetUpdateFrequency.h",
+            "Nodes/FlowNode_SetUpdateFrequency.cpp"
+        ]
+    }
+}

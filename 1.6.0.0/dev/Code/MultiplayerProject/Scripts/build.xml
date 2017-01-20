@@ -1,0 +1,128 @@
+<project name="package" default="upload" basedir="../../../">
+<!--
+This script creates a packaged version of the MultiplayerProject dedicated server, ready for upload to GameLift 
+-->
+    <!-- Global properties -->
+    <property name="build.dirname" value="Build/MultiplayerProject" /> <!-- if not defined on command line -->
+    <property name="build.name" value="MultiplayerProject" /> <!-- if not defined on command line -->
+    <property name="build.version" value="1.0.0" /> <!-- if not defined on command line -->
+    
+    <!-- Parameter 'binary-package-type' will default to 'pc' if not passed in -->
+    <property name="binary-package-type" value="pc" />
+
+    <!-- Make sure the binary package file for the type exists -->
+    <property name="package.xml" value="${basedir}/Code/MultiplayerProject/Scripts/package-${binary-package-type}.xml"/>
+    <available file="${package.xml}" property="package-file-exists" />
+    <fail message="input binary-package-type '${binary-package-type}' is invalid. File '${package.xml}' not found." unless="package-file-exists" />
+
+    <!-- Include the proper patternset -->
+    <include file="${package.xml}" as="package" optional="false" />
+
+    <!-- upload build to gamelift -->
+    <target name="upload" depends="should.upload" if="cond-should-upload">
+	<echo message="Uploading ${build.name} ${build.version} from ${basedir}/${build.dirname}"/>
+	<exec executable="aws.cmd"
+	      dir="${basedir}"
+	      osfamily="windows"
+	      failonerror="false">
+	      <arg line="gamelift upload-build --name ${build.name} --build-version ${build.version} --build-root ${basedir}/${build.dirname}"/>
+	</exec>
+    </target>
+
+    <!-- prompt for user input -->
+    <target name="should.upload" depends="package">
+	<input
+		message="Upload build to GameLift (y/n)?"
+		validargs="y,n"
+		addproperty="do.upload"/>
+	<condition property="cond-should-upload">
+		<equals arg1="y" arg2="${do.upload}" />
+	</condition>
+    </target>
+
+    <target name="package" depends="assets.engine">
+        <!-- ant is case sensitive regardless of os, on windows turn it off -->
+        <condition property="CaseSensitivityOn" value="false"><os family="windows"/></condition>
+
+        <echo message="Copying Visual Studio redistributable"/>
+	<copy file="Bin64/Redistributables/Visual Studio 2013/vcredist_x64.exe" todir="./"/>
+
+        <echo message="Creating Install.bat"/>
+	<echo message="vcredist_x64.exe /q" file="Install.bat"/>
+
+        <echo message="Packaging for package type ${binary-package-type}"/>
+
+	<copy todir="${build.dirname}"
+             overwrite="true">
+	    <!-- this patternset comes from the included package xml file -->
+            <fileset 
+                        followsymlinks="false"
+			dir="./"
+			casesensitive="false">
+                <patternset refid="include-binary-patternset-${binary-package-type}" />
+            </fileset>
+        </copy>
+    </target>
+
+    <!-- Create assets -->
+    <target name="assets.engine"
+            description="Assets deliverables for package and for separate assets zip"
+            depends="assets.compile, assets.buildPaks, assets.buildreport"/>
+
+   <target name="assets.compile" description="Run the asset processor">
+        <echo message="Processing assets using AssetProcessorBatch.exe"/>
+        <exec executable="${basedir}/Bin64/AssetProcessorBatch.exe"
+              dir="${basedir}"
+              osfamily="windows"
+              errorproperty="aperror"
+              resultproperty="apresult"
+	      failonerror="false">
+	      <arg line="/gamefolder=MultiplayerProject platforms=${binary-package-type}"/>
+        </exec>
+   </target>
+
+    <target name="assets.buildPaks" description="Run the resource compiler" unless="assets.isbuilt">
+        <property name="failonRCerror" value="true"/><!-- allows command line override to ignore RC errors -->
+        <echo message="failonRCerror is ${failonRCerror}.  The default is true."/>
+        <echo message="Building Game PAK files from Bin64\rc\RCJob_Build_MultiplayerProject_paks_dedicated.xml (see ${basedir}\BuildGamePaks.log)"/>
+        <exec executable="${basedir}/Bin64/rc/rc.exe"
+              dir="${basedir}"
+              osfamily="windows"
+              output="BuildGamePaks.log"
+              errorproperty="rcerrorout"
+              resultproperty="rcresult"
+              failonerror="false">
+	      <arg line="/threads /job=Bin64/rc/RCJob_Build_MultiplayerProject_paks_dedicated.xml /trg=${build.dirname}"/>
+        </exec>
+
+        <condition property="failedRC">
+            <not><equals arg1="${rcresult}" arg2="0"/></not>
+        </condition>
+
+        <!-- run only once per session -->
+        <property name="assets.isbuilt" value="true"/>
+    </target>
+
+    <!-- The intent of splitting up the display of the rc.exe output from the execution of rc.exe is to reduce the log size for the build
+         RC is chatty even on it's default verbosity setting of 0.  We are afterall processing hundreds of files.
+         Hence, we redirect STDOUT to BuildGamePaks.log during the exec.
+         Sadly, this has the side affect of hiding error messages, since RC.EXE writes some errors to STDOUT instead of STDERR
+         To get around this we display the log on rc.exe error which is what this target does -->
+    <target name="assets.buildreport" description="Display the rc build log only on error.  Then only fail if rc.exe fails AND the build asks to failonerror" if="failedRC">
+        <exec executable="cmd"
+              dir="${basedir}"
+              osfamily="windows"
+              failonerror="false">
+            <arg line="/c TYPE BuildGamePaks.log"/>
+        </exec>
+        <echo>
+${rcerrorout}
+Resource Compiler failed to build pak files. See output above
+</echo>
+        <fail> <!-- Build can override a hard failure with -DfailonRCerror="false" -->
+            <condition>
+                <equals arg1="${failonRCerror}" arg2="true"/>
+            </condition>
+        </fail>
+    </target>
+</project>

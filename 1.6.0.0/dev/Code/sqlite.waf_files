@@ -1,0 +1,10 @@
+{
+    "none":
+    {
+        "Root" :
+        [
+            "Tools/SDKs/SQLite/sqlite3.c",
+            "Tools/SDKs/SQLite/sqlite3.h"
+        ]
+    }
+}

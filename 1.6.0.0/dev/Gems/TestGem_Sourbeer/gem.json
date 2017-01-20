@@ -1,0 +1,11 @@
+{
+    "GemFormatVersion": 3,
+    "Uuid": "235384c51c1348379d0f720290964e47",
+    "Name": "TestGem_Sourbeer",
+    "DisplayName": "TestGem_Sourbeer",
+    "Version": "0.1.0",
+    "LinkType": "Dynamic",
+    "Summary": "A short description of my Gem.",
+    "Tags": ["Untagged"],
+    "IconPath": "preview.png"
+}

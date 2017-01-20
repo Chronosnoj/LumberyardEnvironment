@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<AnimationSettings>
+  <Skeleton value="butterfly_fly"/>
+  <AdditiveAnimation value="0"/>
+  <CompressionSettings>
+    <Version value="0"/>
+    <Compression value="2"/>
+    <RotEpsilon value="0.005"/>
+    <PosEpsilon value="0.02"/>
+    <PerBoneCompression/>
+  </CompressionSettings>
+</AnimationSettings>

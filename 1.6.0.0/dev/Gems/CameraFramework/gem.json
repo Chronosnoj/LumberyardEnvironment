@@ -1,0 +1,20 @@
+{
+    "Dependencies": [
+        {
+            "Uuid": "f910686b6725452fbfc4671f95f733c6", 
+            "VersionConstraints": [
+                "~>0.1"
+            ], 
+            "_comment": "Camera"
+        }
+    ], 
+    "GemFormatVersion": 3,
+    "Uuid": "54f2763fe191432fa681ce4a354eedf5",
+    "Name": "CameraFramework",
+    "Version": "0.1.0",
+    "LinkType": "Dynamic",
+    "DisplayName": "Camera Framework [PREVIEW]",
+    "Tags": ["Camera", "Framework"],
+    "Summary": "(This Gem is in preview, subject to change) This is the framework that camera implementations will be built on top of.  It contains the CameraComponent which contains useful Camera data and the CameraRigComponent that will drive the entity it is attached to through camera behaviors.  You should extend camera behavior through three different types, the target acquiring behavior, the target transform modifying behaviors, and the final camera transform modifying behaviors",
+    "IconPath": "preview.png"
+}

@@ -1,0 +1,11 @@
+{
+    "none":
+    {
+        "resources":
+        [
+            "AssetProcessor.rc",
+            "native/resource.h"
+            
+        ]
+    }
+}

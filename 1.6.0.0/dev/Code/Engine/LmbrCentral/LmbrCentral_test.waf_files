@@ -1,0 +1,14 @@
+{
+    "none":
+    {
+        "Tests":
+        [
+            "Tests/LmbrCentralTest.cpp"
+        ],
+        "UnitTests":
+        [
+            "source/UnitTests/AnimationMotionExtraction.cpp"
+        ]
+    }
+}
+

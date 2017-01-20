@@ -1,0 +1,13 @@
+{
+    "none": {
+        "StaticData": [
+            "StaticDataInterface.h",
+            "StaticDataManager.h",
+            "StaticDataManager.cpp",
+            "StaticDataManager.h",
+            "StaticDataManager.cpp",
+            "StdAfx.h",
+            "StdAfx.cpp"
+        ]
+    }
+}

@@ -1,0 +1,74 @@
+<ObjectStream version="1">
+	<Class name="InputEventBindingsAsset" type="{25971C7A-26E2-4D08-A146-2EFCC1C36B0C}">
+		<Class name="InputEventBindings" field="Bindings" version="1" type="{14FFD4A8-AE46-4E23-B45B-6A7C4F787A91}">
+			<Class name="AZStd::vector" field="Input Event Groups" type="{2BADE35A-6F1B-4698-B2BC-3373D010020C}">
+				<Class name="InputEventGroup" field="element" version="1" type="{25143B7E-2FEC-4CC5-92FE-270B67E79734}">
+					<Class name="AZStd::string" field="Event Name" value="zoom in" type="{EF8FF807-DDEE-4EB0-B678-4CA3A2C490A4}"/>
+					<Class name="AZStd::vector" field="Event Generators" type="{2BADE35A-6F1B-4698-B2BC-3373D010020C}">
+						<Class name="Analog" field="element" version="1" type="{806F21D9-11EA-47FC-8B89-FDB67AADE4FF}">
+							<Class name="SingleEventToAction" field="BaseClass1" version="1" type="{2C93824D-D011-459C-B12B-9F4A6148730C}">
+								<Class name="AZStd::string" field="Input Device Type" value="xbox 360 controller" type="{EF8FF807-DDEE-4EB0-B678-4CA3A2C490A4}"/>
+								<Class name="AZStd::string" field="Input Name" value="xi_triggerr" type="{EF8FF807-DDEE-4EB0-B678-4CA3A2C490A4}"/>
+								<Class name="float" field="Event Value Multiplier" value="1.0000000" type="{EA2C3E90-AFBE-44D4-A90D-FAAF79BAF93D}"/>
+							</Class>
+							<Class name="bool" field="Send Continuous Updates" value="false" type="{A0CA880C-AFE4-43CB-926C-59AC48496112}"/>
+							<Class name="float" field="Dead Zone" value="0.0000001" type="{EA2C3E90-AFBE-44D4-A90D-FAAF79BAF93D}"/>
+						</Class>
+						<Class name="Pressed" field="element" value="" version="1" type="{8C6868E9-CBFF-4B42-AC72-FD22421F9C6A}">
+							<Class name="SingleEventToAction" field="BaseClass1" version="1" type="{2C93824D-D011-459C-B12B-9F4A6148730C}">
+								<Class name="AZStd::string" field="Input Device Type" value="mouse" type="{EF8FF807-DDEE-4EB0-B678-4CA3A2C490A4}"/>
+								<Class name="AZStd::string" field="Input Name" value="mwheel_up" type="{EF8FF807-DDEE-4EB0-B678-4CA3A2C490A4}"/>
+								<Class name="float" field="Event Value Multiplier" value="0.0083000" type="{EA2C3E90-AFBE-44D4-A90D-FAAF79BAF93D}"/>
+							</Class>
+						</Class>
+					</Class>
+				</Class>
+				<Class name="InputEventGroup" field="element" version="1" type="{25143B7E-2FEC-4CC5-92FE-270B67E79734}">
+					<Class name="AZStd::string" field="Event Name" value="zoom out" type="{EF8FF807-DDEE-4EB0-B678-4CA3A2C490A4}"/>
+					<Class name="AZStd::vector" field="Event Generators" type="{2BADE35A-6F1B-4698-B2BC-3373D010020C}">
+						<Class name="Analog" field="element" version="1" type="{806F21D9-11EA-47FC-8B89-FDB67AADE4FF}">
+							<Class name="SingleEventToAction" field="BaseClass1" version="1" type="{2C93824D-D011-459C-B12B-9F4A6148730C}">
+								<Class name="AZStd::string" field="Input Device Type" value="xbox 360 controller" type="{EF8FF807-DDEE-4EB0-B678-4CA3A2C490A4}"/>
+								<Class name="AZStd::string" field="Input Name" value="xi_triggerl" type="{EF8FF807-DDEE-4EB0-B678-4CA3A2C490A4}"/>
+								<Class name="float" field="Event Value Multiplier" value="1.0000000" type="{EA2C3E90-AFBE-44D4-A90D-FAAF79BAF93D}"/>
+							</Class>
+							<Class name="bool" field="Send Continuous Updates" value="false" type="{A0CA880C-AFE4-43CB-926C-59AC48496112}"/>
+							<Class name="float" field="Dead Zone" value="0.0000001" type="{EA2C3E90-AFBE-44D4-A90D-FAAF79BAF93D}"/>
+						</Class>
+						<Class name="Pressed" field="element" value="" version="1" type="{8C6868E9-CBFF-4B42-AC72-FD22421F9C6A}">
+							<Class name="SingleEventToAction" field="BaseClass1" version="1" type="{2C93824D-D011-459C-B12B-9F4A6148730C}">
+								<Class name="AZStd::string" field="Input Device Type" value="mouse" type="{EF8FF807-DDEE-4EB0-B678-4CA3A2C490A4}"/>
+								<Class name="AZStd::string" field="Input Name" value="mwheel_down" type="{EF8FF807-DDEE-4EB0-B678-4CA3A2C490A4}"/>
+								<Class name="float" field="Event Value Multiplier" value="0.0083000" type="{EA2C3E90-AFBE-44D4-A90D-FAAF79BAF93D}"/>
+							</Class>
+						</Class>
+					</Class>
+				</Class>
+				<Class name="InputEventGroup" field="element" version="1" type="{25143B7E-2FEC-4CC5-92FE-270B67E79734}">
+					<Class name="AZStd::string" field="Event Name" value="rotate pitch" type="{EF8FF807-DDEE-4EB0-B678-4CA3A2C490A4}"/>
+					<Class name="AZStd::vector" field="Event Generators" type="{2BADE35A-6F1B-4698-B2BC-3373D010020C}">
+						<Class name="Analog" field="element" version="1" type="{806F21D9-11EA-47FC-8B89-FDB67AADE4FF}">
+							<Class name="SingleEventToAction" field="BaseClass1" version="1" type="{2C93824D-D011-459C-B12B-9F4A6148730C}">
+								<Class name="AZStd::string" field="Input Device Type" value="xbox 360 controller" type="{EF8FF807-DDEE-4EB0-B678-4CA3A2C490A4}"/>
+								<Class name="AZStd::string" field="Input Name" value="xi_thumbry" type="{EF8FF807-DDEE-4EB0-B678-4CA3A2C490A4}"/>
+								<Class name="float" field="Event Value Multiplier" value="1.0000000" type="{EA2C3E90-AFBE-44D4-A90D-FAAF79BAF93D}"/>
+							</Class>
+							<Class name="bool" field="Send Continuous Updates" value="true" type="{A0CA880C-AFE4-43CB-926C-59AC48496112}"/>
+							<Class name="float" field="Dead Zone" value="0.0000001" type="{EA2C3E90-AFBE-44D4-A90D-FAAF79BAF93D}"/>
+						</Class>
+						<Class name="Analog" field="element" version="1" type="{806F21D9-11EA-47FC-8B89-FDB67AADE4FF}">
+							<Class name="SingleEventToAction" field="BaseClass1" version="1" type="{2C93824D-D011-459C-B12B-9F4A6148730C}">
+								<Class name="AZStd::string" field="Input Device Type" value="mouse" type="{EF8FF807-DDEE-4EB0-B678-4CA3A2C490A4}"/>
+								<Class name="AZStd::string" field="Input Name" value="maxis_y" type="{EF8FF807-DDEE-4EB0-B678-4CA3A2C490A4}"/>
+								<Class name="float" field="Event Value Multiplier" value="0.4000000" type="{EA2C3E90-AFBE-44D4-A90D-FAAF79BAF93D}"/>
+							</Class>
+							<Class name="bool" field="Send Continuous Updates" value="true" type="{A0CA880C-AFE4-43CB-926C-59AC48496112}"/>
+							<Class name="float" field="Dead Zone" value="0.0000001" type="{EA2C3E90-AFBE-44D4-A90D-FAAF79BAF93D}"/>
+						</Class>
+					</Class>
+				</Class>
+			</Class>
+		</Class>
+	</Class>
+</ObjectStream>
+

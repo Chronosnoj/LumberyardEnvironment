@@ -1,0 +1,81 @@
+########################################################################################
+# All or portions of this file Copyright (c) Amazon.com, Inc. or its affiliates or
+# its licensors.
+#
+# For complete copyright and license terms please see the LICENSE at the root of this
+# distribution (the "License"). All use of this software is governed by the License,
+# or, if provided, by the license below or the license accompanying this file. Do not
+# remove or modify any license notices. This file is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#
+#
+# Original file Copyright Crytek GMBH or its affiliates, used under license.
+#
+########################################################################################
+
+def build(bld):
+    w_cflags   = ['/W3', '/EHsc',]
+
+    bld.CryResourceCompilerModule(
+        #==============================
+        # Settings
+        #==============================
+        target                  = 'ResourceCompilerImage',
+        vs_filter               = 'RC',
+        file_list               = 'resourcecompilerimage.waf_files',
+        platforms               = ['win'],
+        configurations          = ['debug_all', 'profile_all'],
+
+        build_in_dedicated      = False, # not used by dedicated server
+
+        #==============================
+        # Common
+        #==============================
+        cflags                      = w_cflags,
+
+        use                         = [ 'zlib', 'AzToolsFramework' ],
+        features                    = [ 'qt5', 'mirror_artifacts' ],
+        includes                    = [ '.',
+                                    bld.Path('Code/Tools'),
+                                    bld.Path('Code/Tools/SDKs'),
+                                    bld.Path('Code/Tools/RC/ResourceCompiler'),
+                                    bld.Path('Code/Tools/CryCommonTools'),
+                                    bld.Path('Code/Tools/SDKs/squish-ccr'),
+                                    bld.Path('Code/SDKs/tiff/libtiff') ],
+
+        autod_uselib                = [ 'QT5CORE',
+                                        'QT5GUI',
+                                        'QT5WIDGETS',
+                                        'QT5SVG'],
+
+        defines                     = [ '_AFXDLL',
+                                        'RESOURCECOMPILERIMAGE_EXPORTS',
+                                        'RESOURCE_COMPILER_IMAGE',
+                                        '_WIN64' ],
+        libpath                 = [ bld.Path('Code/SDKs/tiff/libtiff'),
+                                    bld.Path('Code/Tools/CryCommonTools')],
+
+        export_definitions          = 'ImageExports.def',
+        debug_all_linkflags         = '/NODEFAULTLIB:LIBCMTD.lib',
+        ndebug_linkflags            = '/NODEFAULTLIB:LIBCMT.lib',
+
+        #==============================
+        # Windows
+        #==============================
+        win_lib                     = [ 'PVRTexLib', 'Comdlg32' ],
+
+        win_x64_libpath             = [ bld.Path('Code/Tools/SDKs/PowerVRTexTool/Windows_x86_64')],
+        win_x64_debug_all_lib       = ['libtiff64rtstaticd'],
+        win_x64_ndebug_lib          = ['libtiff64rtstatic'],
+        
+        win_cxxflags= [
+            '/wd4819',      # Invalid characters not in default code page.  Source contain characters above extended ascii, including in comments.
+        ],
+        
+        mirror_artifacts_to_include = ['rc/PVRTexLib.dll'],
+
+        #==============================
+        # Testing
+        #==============================
+        test_all_file_list = ['resourcecompilerimage_test.waf_files'],
+    )

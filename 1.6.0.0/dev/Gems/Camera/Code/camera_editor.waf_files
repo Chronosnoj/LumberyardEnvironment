@@ -1,0 +1,8 @@
+{
+    "auto": {
+        "Source": [
+            "Source/CameraEditorSystemComponent.h",
+            "Source/CameraEditorSystemComponent.cpp"
+        ]
+    }
+}

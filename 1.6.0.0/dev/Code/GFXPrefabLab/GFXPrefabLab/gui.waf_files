@@ -1,0 +1,15 @@
+{
+    "auto": {
+        "gui": [
+            "gui/LabGUIApplication.h",
+            "gui/LabGUIApplication.cpp",
+            "gui/QtComponent.h",
+            "gui/QtComponent.cpp"
+        ],
+        "gui/mainwindow": [
+            "gui/mainwindow.h",
+            "gui/mainwindow.cpp",
+            "gui/mainwindow.ui"
+        ]
+    }
+}

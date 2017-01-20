@@ -1,0 +1,9 @@
+{
+   "CryPerforce_uber_0.cpp":{
+      "Source Files":[
+         "stdafx.h",
+		 "PerforceSourceControl.cpp",
+		 "PerforceSourceControl.h"
+      ]
+   }
+}

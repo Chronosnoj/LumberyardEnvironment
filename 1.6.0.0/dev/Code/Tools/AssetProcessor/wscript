@@ -1,0 +1,129 @@
+########################################################################################
+# All or portions of this file Copyright (c) Amazon.com, Inc. or its affiliates or
+# its licensors.
+#
+# For complete copyright and license terms please see the LICENSE at the root of this
+# distribution (the "License"). All use of this software is governed by the License,
+# or, if provided, by the license below or the license accompanying this file. Do not
+# remove or modify any license notices. This file is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#
+########################################################################################
+
+import os
+
+SUBFOLDERS = [
+    'Builders',
+    'AssetBuilderSDK'
+]
+
+DARWIN_INCLUDE_MIRROR_QTLIB_FILES = [
+    'qtlibs_mac/plugins',
+    'qtlibs/Frameworks'
+]
+
+# Dependent files/folders from Bin64 to copy to any other target folder
+WIN_INCLUDE_MIRROR_QTLIB_FILES = [
+    'ToolkitPro1340vc120x64*.dll',
+    'ToolkitPro1340vc120x64*.pdb',
+    'd3dx11_43.dll',
+    'D3DCompiler_43.dll',
+    'd3dcompiler_46.dll',
+    'd3dcompiler_47.dll',
+    'icu*.dll',
+    'libEGL*',
+    'libGLESv2*',
+    'libeay32.dll',
+    'LuaCompiler.exe',
+    'ffmpeg*.exe',
+    'ssleay32.dll',
+    'xinput1_3.dll',
+    'QT*.dll',
+    'qtlibs'
+]
+
+
+def build(bld):
+
+    bld.recurse(dirs=SUBFOLDERS) # mandatory - these folders are required
+
+    bld.CryQtApplication(
+        target          = 'AssetProcessor',
+        vs_filter       = 'Tools/AssetProcessor',
+        file_list   = ['assetprocessor.waf_files', 'assetprocessor_gui.waf_files'],
+        platforms       = ['win', 'darwin'],
+        configurations  = ['debug_all', 'profile_all'],
+        win_file_list   = ['assetprocessor_win.waf_files'],
+        disable_pch     = True,
+
+        win_mirror_artifacts_to_include = WIN_INCLUDE_MIRROR_QTLIB_FILES,
+        darwin_x64_mirror_artifacts_to_include = DARWIN_INCLUDE_MIRROR_QTLIB_FILES,
+
+        features        = ['qt5','mirror_artifacts'],
+        win_features    = ['generate_rc_file'],
+        win_includes    = ['native'], # for the resource.h file
+
+        use      = ['AzToolsFramework', 'AssetBuilderSDK'],
+        
+        debug_defines = ['AZ_DEBUG_BUILD'],
+        
+        defines         = ['RESOURCE_COMPILER',
+                           'EXCLUDE_CINEMIZER_SDK',
+                           'EXCLUDE_OCULUS_SDK',
+                           'NOMINMAX',
+                           'NOT_USE_CRY_MEMORY_MANAGER',
+                           'UNICODE'],
+
+        autod_uselib    = ['QTMAIN',
+                           'QT5CORE',
+                           'QT5GUI',
+                           'QT5NETWORK',
+                           'QT5SVG',
+                           'QT5WIDGETS',
+                           'QT5XML'],
+
+        win_lib = ['shell32'],
+
+        darwin_defines = ['FORCE_PROXY_MODE'],
+
+        darwin_rpath = ['@executable_path/../Bin64/qtlibs_mac/Frameworks' ]
+
+    )
+
+    ###########################################################################################################################################
+    
+    bld.CryQtConsoleApplication(
+        target          = 'AssetProcessorBatch',
+        vs_filter       = 'Tools/AssetProcessor',
+        file_list       = ['assetprocessor.waf_files', 'assetprocessor_unittest.waf_files'],
+        win_file_list   = ['assetprocessor_win.waf_files'],
+        platforms       = ['win', 'darwin'],
+        configurations  = ['debug_all', 'profile_all'],
+        disable_pch     = True,
+
+        features        = ['qt5'],
+        win_features    = ['generate_rc_file'],
+        win_includes    = ['native'],  # for the resource.h file
+
+        use             = ['AzToolsFramework', 'AssetBuilderSDK'],
+
+        debug_defines   = ['AZ_DEBUG_BUILD'],
+        
+        autod_uselib    = ['QT5CORE',
+                           'QT5GUI',
+                           'QT5NETWORK',
+                           'QT5WIDGETS'],
+
+        defines         = [ 'RESOURCE_COMPILER',
+                            'EXCLUDE_CINEMIZER_SDK',
+                            'EXCLUDE_OCULUS_SDK',
+                            'NOMINMAX',
+                            'NOT_USE_CRY_MEMORY_MANAGER',
+                            'UNICODE',
+                            'BATCH_MODE',
+                            'UNIT_TEST'],
+
+        darwin_rpath    = ['@executable_path/../Bin64/qtlibs_mac/Frameworks' ]
+    )
+
+

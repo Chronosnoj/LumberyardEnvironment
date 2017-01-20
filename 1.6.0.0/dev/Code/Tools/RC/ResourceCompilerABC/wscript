@@ -1,0 +1,106 @@
+########################################################################################
+# All or portions of this file Copyright (c) Amazon.com, Inc. or its affiliates or
+# its licensors.
+#
+# For complete copyright and license terms please see the LICENSE at the root of this
+# distribution (the "License"). All use of this software is governed by the License,
+# or, if provided, by the license below or the license accompanying this file. Do not
+# remove or modify any license notices. This file is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#
+#
+# Original file Copyright Crytek GMBH or its affiliates, used under license.
+#
+########################################################################################
+
+def build(bld):
+
+    libs_release =  [   'AlembicAbcCollection-vc120-mt-s',
+                        'AlembicAbcCoreAbstract-vc120-mt-s',
+                        'AlembicAbcCoreFactory-vc120-mt-s',
+                        'AlembicAbcCoreHDF5-vc120-mt-s',
+                        'AlembicAbcCoreOgawa-vc120-mt-s',
+                        'AlembicAbcGeom-vc120-mt-s',
+                        'AlembicAbcMaterial-vc120-mt-s',
+                        'AlembicAbc-vc120-mt-s',
+                        'AlembicOgawa-vc120-mt-s',
+                        'AlembicUtil-vc120-mt-s',
+                        'hdf5_hl-vc120-mt-s',
+                        'hdf5-vc120-mt-s',
+                        'Half-vc120-mt-s',
+                        'Iex-vc120-mt-s',
+                        'IlmThread-vc120-mt-s',
+                        'Imath-vc120-mt-s',
+                        'libszip-vc120-mt-s',
+                        'zlib-vc120-mt-s' ]
+
+    libs_debug =    [   'AlembicAbcCollection-vc120-mt-sd',
+                        'AlembicAbcCoreAbstract-vc120-mt-sd',
+                        'AlembicAbcCoreFactory-vc120-mt-sd',
+                        'AlembicAbcCoreHDF5-vc120-mt-sd',
+                        'AlembicAbcCoreOgawa-vc120-mt-sd',
+                        'AlembicAbcGeom-vc120-mt-sd',
+                        'AlembicAbcMaterial-vc120-mt-sd',
+                        'AlembicAbc-vc120-mt-sd',
+                        'AlembicOgawa-vc120-mt-sd',
+                        'AlembicUtil-vc120-mt-sd',
+                        'hdf5_hl-vc120-mt-sd',
+                        'hdf5-vc120-mt-sd',
+                        'Half-vc120-mt-sd',
+                        'Iex-vc120-mt-sd',
+                        'IlmThread-vc120-mt-sd',
+                        'Imath-vc120-mt-sd',
+                        'libszip-vc120-mt-sd',
+                        'zlib-vc120-mt-sd' ]
+
+    bld.CryResourceCompilerModule(
+        #==============================
+        # Settings
+        #==============================
+        target                      = 'ResourceCompilerABC',
+        vs_filter                   = 'RC',
+        file_list                   = 'resourcecompilerabc.waf_files',
+        platforms                   = ['win'],
+        configurations              = ['debug_all', 'profile_all'],
+
+        build_in_dedicated          = False, # not used by dedicated server
+
+        #==============================
+        # Common
+        #==============================
+        use                         = ['lz4', 'AzToolsFramework'],
+        includes                    = [ '.',
+                                bld.Path('Code/Tools'),
+                                bld.Path('Code/Tools/RC/ResourceCompiler'),
+                                bld.Path('Code/Tools/CryCommonTools'),
+                                bld.Path('Code/Tools/SDKs/Alembic/alembic/include'),
+                                bld.Path('Code/Tools/SDKs/Alembic/ilmbase/include/OpenEXR'),
+                                bld.Path('Code/SDKs/zlib-common')],
+
+        autod_uselib                = [ 'QT5CORE',
+                                        'QT5GUI',
+                                        'QT5WIDGETS'],
+
+
+        export_definitions          = 'ResourceCompilerPlugin.def',
+
+        #==============================
+        # Windows
+        #==============================
+        win_debug_all_lib           = libs_debug,
+        win_ndebug_lib              = libs_release,
+
+        #==============================
+        # Windows x64
+        #==============================
+        win_x64_libpath     = [ bld.Path('Code/Tools/SDKs/Alembic/alembic/lib/x64'),
+                                bld.Path('Code/Tools/SDKs/Alembic/hdf5/lib/x64'),
+                                bld.Path('Code/Tools/SDKs/Alembic/ilmbase/lib/x64'),
+                                bld.Path('Code/Tools/SDKs/Alembic/szip/lib/x64'),
+                                bld.Path('Code/Tools/SDKs/Alembic/zlib/lib/x64') ],
+                                
+        #==============================
+        # Testing
+        #==============================
+        test_all_file_list = ['resourcecompilerabc_test.waf_files'],
+    )

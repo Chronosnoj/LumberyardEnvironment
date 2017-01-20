@@ -1,0 +1,3 @@
+EXPORTS
+	CreateSourceControl			@1
+	DestroySourceControl		@2

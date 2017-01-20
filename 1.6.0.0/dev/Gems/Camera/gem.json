@@ -1,0 +1,12 @@
+{
+    "GemFormatVersion": 3,
+    "Uuid": "f910686b6725452fbfc4671f95f733c6",
+    "Name": "Camera",
+    "Version": "0.1.0",
+    "LinkType": "Dynamic",
+    "DisplayName": "Camera",
+    "Tags": ["Camera", ""],
+    "Summary": "This is a basic Camera that will define a frustum for renderering",
+    "IconPath": "preview.png",
+    "EditorModule": true
+}

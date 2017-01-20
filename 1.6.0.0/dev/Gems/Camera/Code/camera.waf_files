@@ -1,0 +1,20 @@
+{
+    "auto": {
+        "Root": [
+        ],
+        "Interface": [
+            "Include/Camera/CameraComponentBus.h"
+        ],
+        "Source": [
+            "Source/CameraGem.cpp",
+            "Source/CameraComponent.cpp",
+            "Source/CameraComponent.h"
+        ]
+    },
+    "none": {
+        "Source": [
+            "Source/StdAfx.cpp",
+            "Source/StdAfx.h"
+        ]
+    }
+}

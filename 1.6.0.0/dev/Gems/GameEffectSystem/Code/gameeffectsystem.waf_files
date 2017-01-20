@@ -1,0 +1,38 @@
+{
+    "none": {
+        "Source": [
+            "source/StdAfx.cpp",
+            "source/StdAfx.h"
+        ]
+    },
+    "auto": {
+        "Include": [
+            "include/GameEffectSystem/IGameEffectSystem.h",
+            "include/GameEffectSystem/IGameRenderNode.h",
+            "include/GameEffectSystem/GameEffectsSystemDefines.h"
+        ],
+        "Include/GameEffects": [
+            "include/GameEffectSystem/GameEffects/IGameEffect.h",
+            "include/GameEffectSystem/GameEffects/GameEffectBase.h"
+        ],
+        "Source": [
+            "source/GameEffectSystemGem.h",
+            "source/GameEffectSystemGem.cpp"
+        ],
+        "Source/GameSDK": [
+            "source/GameEffectsSystem.h",
+            "source/GameEffectsSystem.cpp"
+        ],
+        "Source/GameSDK/GameEffects": [
+            "source/GameEffects/GameEffectSoftCodeLibrary.cpp"
+        ],
+        "Source/GameSDK/RenderElements": [
+            "source/RenderElements/GameRenderElement.h",
+            "source/RenderElements/GameRenderElement.cpp",
+            "source/RenderElements/GameRenderElementSoftCodeLibrary.cpp"
+        ],
+        "Source/GameSDK/RenderNodes": [
+            "source/RenderNodes/GameRenderNodeSoftCodeLibrary.cpp"
+        ]
+    }
+}

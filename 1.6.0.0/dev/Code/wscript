@@ -1,0 +1,60 @@
+########################################################################################
+# All or portions of this file Copyright (c) Amazon.com, Inc. or its affiliates or
+# its licensors.
+#
+# For complete copyright and license terms please see the LICENSE at the root of this
+# distribution (the "License"). All use of this software is governed by the License,
+# or, if provided, by the license below or the license accompanying this file. Do not
+# remove or modify any license notices. This file is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#
+#
+# Original file Copyright Crytek GMBH or its affiliates, used under license.
+#
+########################################################################################
+
+from waflib.Build import BuildContext
+
+
+SUBFOLDERS = [
+    'Framework',
+    'CryEngine',
+    'Engine',
+    'Sandbox',
+    'Tools',
+    'Lyzard',
+    'GFXPrefabLab',
+    'Launcher'  # recursing into this subfolder generates launchers for each enabled game project.
+    ]
+
+def build(bld):
+    # do not add game projects here.  They will be added automatically based on what
+    # game projects you have enabled in your user settings, from the list defined in projects.json
+
+    bld.recurse(SUBFOLDERS, mandatory=False)
+
+    if isinstance(bld, BuildContext):
+        # RapidJSON is a header-only library. Making it a build target lets others "use" it.
+        bld(name='rapidjson', features='use', target='rapidjson', export_includes='SDKs/rapidjson/include')
+        # RapidXML also.
+        bld(name='rapidxml', features='use', target='rapidxml', export_includes='SDKs/rapidxml')
+
+    #sqlite is a compiled library like zLIB and others.
+    bld.CryEngineStaticLibrary(
+        target          = 'sqlite',
+        vs_filter       = 'Tools/SQLite',
+        file_list       = ['sqlite.waf_files'],
+        platforms       = ['win', 'darwin'],
+        configurations  = ['debug_all', 'profile_all', 'performance_all', 'release_all'],
+        disable_pch     = True,
+        darwin_cflags   = '-fno-fast-math',
+        ios_cflags      = '-fno-fast-math',
+        appletv_cflags  = '-fno-fast-math',
+        android_cflags  = '-fno-fast-math',
+        includes        = 'Tools/SDKs/SQLite',
+        export_includes = bld.Path('Code/Tools/SDKs')
+        )
+        # note that we pull in the root because we'd rather you go #include SQLite/SQlite3.h than naked headers
+        
+
+    
