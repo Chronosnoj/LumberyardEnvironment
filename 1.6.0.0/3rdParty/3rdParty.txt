@@ -1,0 +1,2 @@
+This location is for 3rd Party SDKs.
+This file, called "3rdParty.txt" is also a marker which indicates to the tools that this is a valid 3rd party location.
